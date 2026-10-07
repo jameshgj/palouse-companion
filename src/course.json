@@ -1,0 +1,286 @@
+{
+  "site": "https://palousemindfulness.com",
+  "readingMinutesEstimate": 8,
+  "practiceMinutesPerDay": 30,
+  "informalMinutesPerDay": 5,
+  "practiceDaysPerWeek": 6,
+  "weeks": [
+    {
+      "n": 0, "short": "Start", "title": "Getting Started", "subtitle": "Before Week 1",
+      "page": "/MBSR/gettingstarted.html",
+      "summary": "Experience the Introduction, then five short setup steps. The whole course takes about 50 hours over eight or more weeks: roughly 2 hours of videos and reading per week, 30–35 minutes of formal practice a day, plus small informal practices.",
+      "steps": [
+        {"t": "Experience the Introduction", "url": "/MBSR/week0.html", "min": 30, "by": "What mindfulness is and how the course works"},
+        {"t": "Fill in the Getting Started Questionnaire", "url": "https://forms.gle/tehMvSuefTrCZRXw8", "min": 5, "by": "Needed before Week 1 if you want a certificate; joins you to the community"},
+        {"t": "Complete the Goals & Commitment Worksheet", "url": "/docs/goals-commitment.pdf", "alt": "/docs/goals-commitment.docx", "min": 20, "by": "What you hope will change, and when and where you'll practise. For you only."},
+        {"t": "Skim the FAQ", "url": "/support/FAQ.html", "min": 10, "by": "Common questions about the course and practices"},
+        {"t": "Create a workbook (optional)", "url": "/MBSR/workbook.html", "min": 15, "by": "Printed pages to track progress and hold your practice sheets"},
+        {"t": "Look after your health", "url": "/support/FAQstrong.html", "min": 5, "by": "Modify any practice to suit your body. If things feel too hard, pause and get support."}
+      ]
+    },
+    {
+      "n": 1, "short": "Wk 1", "title": "Simple Awareness", "subtitle": "Introduction to the Body Scan",
+      "page": "/MBSR/week1.html", "playlist": "PLbiVpU59JkVbNfFyAG4SrC8NGnC0-D4jg", "pdf": "/MBSR/week1.pdf",
+      "summary": "Paying attention to your inner experience with kindness and curiosity, and learning that a busy mind doesn't mean you're doing it wrong.",
+      "videos": [
+        {"t": "The Power of Mindfulness", "by": "Shauna Shapiro", "id": "IeblJdB2-Vo", "min": 13},
+        {"t": "Don't Try to be Mindful", "by": "Daron Larson", "id": "Y_27l2hMYvE", "min": 12},
+        {"t": "Mindfulness and the Body", "by": "Michelle Maldonado", "id": "2teP3DJKxaA", "min": 10},
+        {"t": "Befriending Our Bodies", "by": "Jon Kabat-Zinn", "id": "iS53roI_pWE", "min": 4},
+        {"t": "All Bodies are Beautiful", "by": "Amy Pence-Brown", "id": "wEGMn-XvtIE", "min": 4}
+      ],
+      "readings": [
+        {"t": "The Body Scan Meditation", "by": "Jon Kabat-Zinn", "url": "/docs/bodyscan.html"},
+        {"t": "10 Myths of Meditation", "by": "Melissa Eisler", "url": "/docs/ten-myths.html"},
+        {"t": "Mouthfuls of Mindfulness", "by": "Jan Chozen Bays", "url": "/docs/mouthfuls-mindfulness.html"}
+      ],
+      "formal": ["Day 1: Raisin Meditation (have two raisins and a glass of water ready)", "Days 2–6: Body Scan"],
+      "formalLinks": [{"t": "Raisin Meditation", "url": "/meditations/raisin.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}],
+      "informal": "Bring full awareness to one routine activity a day, such as washing dishes or eating a meal. Before bed, take five minutes to note it on your sheet.",
+      "sheets": "week1",
+      "supplementary": [
+        {"t": "Introduction to Mindful Eating", "by": "Michelle DuVal", "url": "https://www.youtube.com/watch?v=6tw93IgfL0U", "min": 10},
+        {"t": "What Would It Take for You to Be Still?", "by": "Catherine Price", "url": "/docs/what-would-it-take.pdf"},
+        {"t": "An Apple as Past, Present and Future", "by": "Susan Kaiser Greenland", "url": "https://www.youtube.com/watch?v=j2uooeprDkE", "min": 2},
+        {"t": "Managing Anxiety with Mindfulness", "by": "Rachel Green", "url": "https://www.youtube.com/watch?v=aSy9DZAJWIE", "min": 15},
+        {"t": "The Mindfulness-Based Eating Solution (book)", "by": "Lynn Rossy", "url": "https://lynnrossy.com/the-mindfulness-based-eating-solution/"}
+      ]
+    },
+    {
+      "n": 2, "short": "Wk 2", "title": "Attention and the Brain", "subtitle": "Introduction to Sitting Meditation",
+      "page": "/MBSR/week2.html", "playlist": "PLbiVpU59JkValOIEIo2Y65mBopHCjKvBo", "pdf": "/MBSR/week2.pdf",
+      "summary": "How much we miss in a busy day, and how even weeks of practice can physically change the brain. Noticing that your attention has wandered is itself mindfulness.",
+      "videos": [
+        {"t": "The Monkey Business Illusion", "by": "Daniel Simons", "id": "IGQmdoK_ZfY", "min": 2},
+        {"t": "Mindfulness Practice", "by": "Michelle Maldonado", "id": "kr6ZFY_gVK8", "min": 17},
+        {"t": "Mindful Meditation and the Brain", "by": "Shauna Shapiro", "id": "R6hybxLidgA", "min": 6},
+        {"t": "How Meditation Can Reshape Our Brains", "by": "Sara Lazar", "id": "m8rRzTtP7Tc", "min": 8},
+        {"t": "Coming to Our Senses", "by": "Jon Kabat-Zinn", "id": "XNvZkepAiMo", "min": 9},
+        {"t": "All it takes is 10 Mindful Minutes", "by": "Andy Puddicombe", "id": "qzR62JJCMBQ", "min": 10}
+      ],
+      "readings": [
+        {"t": "Sitting Meditation", "by": "Jon Kabat-Zinn", "url": "/docs/sittingmeditation.html"},
+        {"t": "Joshua Bell plays a $3,000,000 violin", "by": "", "url": "/docs/joshua-bell.html"},
+        {"t": "How the Brain Rewires Itself", "by": "Sharon Begley", "url": "/docs/brain-rewires.html"},
+        {"t": "How Meditation Affects the Gray Matter of the Brain", "by": "David R. Hamilton", "url": "/docs/graymatter.html"}
+      ],
+      "formal": ["Alternate days: Sitting Meditation (breath as the anchor), then Body Scan"],
+      "formalLinks": [{"t": "Sitting Meditation", "url": "/meditations/sittingmeditation.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}],
+      "informal": "Pleasant Events Calendar: notice one pleasant moment a day, however small, and how it felt in body, thoughts and mood. Log it before sleep.",
+      "sheets": "week2",
+      "supplementary": [
+        {"t": "Life is Right Now", "by": "Jon Kabat-Zinn", "url": "https://www.youtube.com/watch?v=VGtJQNqMXBY", "min": 7},
+        {"t": "Why a Neuroscientist Would Study Meditation", "by": "Willoughby Britton", "url": "https://www.youtube.com/watch?v=ioCY_HKBFOc", "min": 10},
+        {"t": "Measuring Mindfulness", "by": "Judson Brewer", "url": "https://www.youtube.com/watch?v=wp9JD4APjSs", "min": 7},
+        {"t": "Whodunnit", "by": "Shamash Alidina", "url": "https://www.youtube.com/watch?v=8ctyBHr2HO0", "min": 4},
+        {"t": "Neuroscientist Richard Davidson's Wake-Up Call", "by": "Huffington Post", "url": "https://www.youtube.com/watch?v=_Gok2dUtdWE", "min": 5},
+        {"t": "Mastering Your Own Mind", "by": "Katherine Ellison", "url": "/docs/mastering.pdf"}
+      ]
+    },
+    {
+      "n": 3, "short": "Wk 3", "title": "Dealing with Thoughts", "subtitle": "Introduction to Yoga",
+      "page": "/MBSR/week3.html", "playlist": "PLbiVpU59JkVZzL8TqgU6Uz_HxhnMqpzZv", "pdf": "/MBSR/week3.pdf",
+      "summary": "Meditation isn't about getting rid of thoughts. It's about changing your relationship with them, and taking the striving out of practice.",
+      "videos": [
+        {"t": "Non-Striving", "by": "Jon Kabat-Zinn", "id": "Ye3xwfECuYc", "min": 3},
+        {"t": "Attention, Intention, Attitude", "by": "Shauna Shapiro", "id": "KsXNUpZnyg4", "min": 16},
+        {"t": "Your Thoughts are Bubbles", "by": "Jon Kabat-Zinn", "id": "w8Nsa45d0XE", "min": 5},
+        {"t": "Dealing with Thoughts", "by": "Tara Brach", "id": "9kNXhJf6jOM", "min": 20},
+        {"t": "The Samurai and the Fly", "by": "Hanjin Song", "id": "R5-HNXxc5kk", "min": 3}
+      ],
+      "readings": [
+        {"t": "Mindful Yoga", "by": "Jon Kabat-Zinn", "url": "/docs/yoga.pdf", "first": true},
+        {"t": "Meditation: It's Not What You Think", "by": "Jon Kabat-Zinn", "url": "/docs/JKZ_thinking.pdf"},
+        {"t": "I Hadn't Thought of That", "by": "Wes Nisker", "url": "/docs/nisker-thoughts.pdf"},
+        {"t": "Your Mind: Friend or Foe?", "by": "Jack Kornfield", "url": "/docs/your-mind-friend-or-foe.pdf"},
+        {"t": "The Reality Below Thoughts", "by": "Jack Kornfield", "url": "/docs/reality-below-thoughts.pdf"}
+      ],
+      "note": "Read “Mindful Yoga” before your first yoga session, even if you already practise yoga. The focus here is body awareness, not the exact pose.",
+      "formal": ["Alternate Mindful Yoga 1 and Sitting Meditation", "One day this week: Body Scan"],
+      "formalLinks": [{"t": "Mindful Yoga 1", "url": "/meditations/yoga1.html"}, {"t": "Sitting Meditation", "url": "/meditations/sittingmeditation.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}],
+      "informal": "Unpleasant Events Calendar: notice one unpleasant moment a day and how it showed up in body, thoughts and mood. Log it before sleep.",
+      "sheets": "week3",
+      "supplementary": [
+        {"t": "Thoughts: Real, but not True", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=iCrCmqeWHp4", "min": 26},
+        {"t": "Surrender to the Monkeys", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=H8yoWnEmTO8", "min": 4},
+        {"t": "Hands off the Controls", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=HZ8V3M-mXys", "min": 14},
+        {"t": "Freedom from Repetitive Thoughts", "by": "Jack Kornfield", "url": "https://jackkornfield.com/expand-field-attention/"},
+        {"t": "Letting Go in Meditation", "by": "Peter Russell and Shauna Shapiro", "url": "https://www.youtube.com/watch?v=H812bBkoHNk", "min": 15},
+        {"t": "Autobiography in Five Short Chapters", "by": "Portia Nelson", "url": "/docs/autobio_5chapters.pdf"},
+        {"t": "Transform Your Mind, Change Your Brain", "by": "Richard Davidson", "url": "https://www.youtube.com/watch?v=7tRdDqXgsJ0", "min": 65},
+        {"t": "Mindfulness, the Mind, and Addictive Behavior", "by": "Judson Brewer", "url": "https://www.youtube.com/watch?v=7a9sWI0vJzc", "min": 20}
+      ]
+    },
+    {
+      "n": 4, "short": "Wk 4", "title": "Responding vs. Reacting", "subtitle": "STOP: the one-minute breathing space",
+      "page": "/MBSR/week4.html", "playlist": "PLbiVpU59JkVZeQPQ1u5mS8U1c0V7J5OJU", "pdf": "/MBSR/week4.pdf",
+      "summary": "The physiology of stress, why it isn't always the enemy, and STOP, a one-minute practice you can use anywhere. This is the halfway point.",
+      "videos": [
+        {"t": "Stress: Portrait of a Killer (excerpt)", "by": "Robert Sapolsky", "id": "mbLFpPKG2x0", "min": 7},
+        {"t": "How Stress Affects Your Brain", "by": "Madhumita Murgia", "id": "WuyPuH9ojCE", "min": 4},
+        {"t": "How To Make Stress Your Friend", "by": "Kelly McGonigal", "id": "RcGyVTAoXEU", "min": 14},
+        {"t": "STOP: A Short Mindfulness Practice", "by": "Susan Bauer-Wu", "id": "WaszqhPCWX0", "min": 4},
+        {"t": "Using STOP", "by": "Dave Potter with Yurika Vu", "id": "AhoZug4WDpo", "min": 21}
+      ],
+      "readings": [
+        {"t": "Understanding the Stress Response", "by": "Harvard Health Publications", "url": "/docs/understanding-stress.pdf"},
+        {"t": "Harnessing the Upsides of Stress", "by": "Harvard Health Publications", "url": "/docs/harnessing-the-upsides.pdf"},
+        {"t": "STOP: One-Minute Breathing Space", "by": "Print it and put it somewhere you'll see it", "url": "/docs/STOP.pdf", "min": 2},
+        {"t": "The Magic Quarter Second", "by": "Tara Brach", "url": "/docs/magic-quarter-second.pdf"}
+      ],
+      "formal": ["Alternate Mindful Yoga 2 and Sitting Meditation"],
+      "formalLinks": [{"t": "Mindful Yoga 2", "url": "/meditations/yoga2.html"}, {"t": "Sitting Meditation", "url": "/meditations/sittingmeditation.html"}],
+      "informal": "Practise STOP during the day, ideally in the in-between moments (waiting in line, getting into the car) so it's there when stress hits. On your last day, fill in the Midway Self-Assessment instead.",
+      "sheets": "week4",
+      "extraSheets": [{"t": "Midway Self-Assessment", "url": "/docs/midway-assessment.pdf", "alt": "/docs/midway-assessment.docx"}],
+      "supplementary": [
+        {"t": "The Science of Anxiety", "by": "Time Magazine", "url": "/docs/science-of-anxiety.pdf"},
+        {"t": "The Anatomy of Fear", "by": "Discover Magazine", "url": "/docs/anatomy-of-fear.pdf"},
+        {"t": "When Is Stress Good for You", "by": "Bruce McEwen", "url": "https://aeon.co/essays/how-stress-works-in-the-human-body-to-make-or-break-us"},
+        {"t": "The Psychology of Stress", "by": "Robert Sapolsky", "url": "https://www.youtube.com/watch?v=r8-jOAsvj2c", "min": 3},
+        {"t": "Stress: Portrait of a Killer (longer version)", "by": "Robert Sapolsky", "url": "https://www.youtube.com/watch?v=a58RrLUs4YE", "min": 27},
+        {"t": "The Mindful Approach to Butterflies in Your Stomach", "by": "Jennifer Wolkin", "url": "http://www.mindful.org/mindful-approach-real-butterflies-stomach/"},
+        {"t": "The Other Brain Also Deals with Many Woes", "by": "Harriet Brown", "url": "/docs/otherbrain.pdf"}
+      ]
+    },
+    {
+      "n": 5, "short": "Wk 5", "title": "Difficult Emotions and Pain", "subtitle": "The “Turning Toward” meditations",
+      "page": "/MBSR/week5.html", "playlist": "PLbiVpU59JkVYtEL6-21TOfe3IELNMmOhO", "pdf": "/MBSR/week5.pdf",
+      "summary": "A counter-intuitive way to work with emotional or physical pain: gently exploring the difficulty rather than moving away from it, with self-compassion.",
+      "videos": [
+        {"t": "Turning Toward Difficulty", "by": "Vidyamala Burch", "id": "8aAATYSvNjc", "min": 6, "approx": true},
+        {"t": "One Moment at a Time", "by": "Vidyamala Burch", "id": "Ez9s124sL8I", "min": 6, "approx": true},
+        {"t": "The Gift and Power of Emotional Courage", "by": "Susan David", "id": "NDQ1Mi5I4rg", "min": 16},
+        {"t": "Pain × Resistance = Suffering", "by": "Tara Brach", "id": "O8-exWpcngc", "min": 8},
+        {"t": "Holding Your Feelings “Like a Baby”", "by": "Thupten Jinpa", "id": "HeSaxqnmezY", "min": 2},
+        {"t": "The Three Components of Self-Compassion", "by": "Kristin Neff", "id": "w3aba1ok5lE", "min": 6}
+      ],
+      "readings": [
+        {"t": "The Four Ways of Responding to Emotional or Physical Pain", "by": "Dave Potter", "url": "/docs/responding-to-difficulty.pdf"},
+        {"t": "“Turning Toward” Difficult Emotions", "by": "Guide for informal practice, option 1", "url": "/docs/turning-toward-emotional.pdf", "min": 3},
+        {"t": "“Turning Toward” Physical Pain", "by": "Guide for informal practice, option 2", "url": "/docs/turning-toward-physical.pdf", "min": 3},
+        {"t": "Radical Acceptance", "by": "Tara Brach", "url": "/docs/radical-acceptance.pdf"},
+        {"t": "The “Felt Sense” Prayer", "by": "as shared by Tara Brach", "url": "/docs/felt-sense-prayer.pdf", "min": 2}
+      ],
+      "note": "If you live with significant physical pain, also watch Tara Brach's “Working Skillfully with Pain” in the extra material below.",
+      "formal": ["Days 1–2: “Turning Toward” Meditation", "Days 3–6: any practice you've learned so far"],
+      "formalLinks": [{"t": "Turning Toward", "url": "/meditations/turning-toward.html"}],
+      "informal": "When an unwanted emotion or physical pain comes up during the day, practise “Turning Toward” it, using the two one-page guides in this week's reading.",
+      "sheets": "week5",
+      "supplementary": [
+        {"t": "Inner Listening: An Introduction to Focusing", "by": "Ann Weiser Cornell", "url": "/graduates/Inner-Listening.html"},
+        {"t": "Working Skillfully with Pain", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=XHlflWZSYlY", "min": 4},
+        {"t": "Guided Reflection on Inhabiting this Body", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=r73A9tXmAuY", "min": 13},
+        {"t": "Mindfulness and Painful Emotions", "by": "Steven Hayes", "url": "https://www.youtube.com/watch?v=SHnULfYKXcI", "min": 2},
+        {"t": "The Strange Case of Chronic Back Pain", "by": "Ron Siegel", "url": "/docs/siegel-backpain.pdf"},
+        {"t": "Dealing with Panic Attacks", "by": "Steven Hayes", "url": "https://www.youtube.com/watch?v=Kr7mhCCiSoY", "min": 3},
+        {"t": "Mindfulness and Physical Pain", "by": "Kelly McGonigal", "url": "https://www.youtube.com/watch?v=mCrsJIRtiqI", "min": 4},
+        {"t": "Awakening Self-Compassion", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=yXIOHYxllbc", "min": 23},
+        {"t": "Mindfulness-Based Pain Management", "by": "Vidyamala Burch", "url": "https://www.youtube.com/watch?v=N10_dcIZp2k", "min": 21},
+        {"t": "The Five-Step Model", "by": "Vidyamala Burch", "url": "/docs/vidyamala-5steps.pdf"}
+      ]
+    },
+    {
+      "n": 6, "short": "Wk 6", "title": "Mindfulness and Communication", "subtitle": "Mountain & Lake meditations",
+      "page": "/MBSR/week6.html", "playlist": "PLbiVpU59JkVaxox70z7TUv9eyriJ0galL", "pdf": "/MBSR/week6.pdf",
+      "summary": "Moving from your inner world to your relationships: deep listening, empathy, anger, and four ways people handle conflict.",
+      "videos": [
+        {"t": "Deep Listening", "by": "Frank Ostaseski", "id": "WjWiZ8WGZZA", "min": 3},
+        {"t": "The Power of Empathy in Communication", "by": "Ann Weiser Cornell", "id": "GD4lUGSKzlw", "min": 2},
+        {"t": "The Art of Being Heard", "by": "Susan Piver", "id": "WcIMs_4NavI", "min": 4},
+        {"t": "The Sacred Art of Listening", "by": "Tara Brach", "id": "39eFKcIi-JY", "min": 19},
+        {"t": "Awakening Through Conflict", "by": "Tara Brach", "id": "KCPYNfLWXxE", "min": 9},
+        {"t": "Blame", "by": "narrated by Brené Brown", "id": "TZpVTWiFlGw", "min": 3},
+        {"t": "Empathy", "by": "narrated by Brené Brown", "id": "1Evwgu369Jw", "min": 3}
+      ],
+      "readings": [
+        {"t": "The Sacred Art of Listening", "by": "Tara Brach", "url": "/docs/sacred-art-of-listening.pdf"},
+        {"t": "The Most Frequently Asked Question", "by": "Sylvia Boorstein", "url": "/docs/most-frequently-asked-Q.pdf"},
+        {"t": "The Answer to Anger", "by": "Pema Chödrön", "url": "/docs/anger-chodron.pdf"},
+        {"t": "Conflict Management Styles", "by": "Summary of the four styles", "url": "/docs/conflict_styles.pdf"},
+        {"t": "The Heart of Nonviolent Communication", "by": "Marshall Rosenberg", "url": "/docs/non-violent-communication.pdf"}
+      ],
+      "formal": ["Your choice each day: Body Scan, Sitting Meditation or Yoga", "At least once: Mountain or Lake Meditation (20 min; add 10 min of silence if you like)"],
+      "formalLinks": [{"t": "Mountain", "url": "/meditations/mountain.html"}, {"t": "Lake", "url": "/meditations/lake.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}, {"t": "Sitting", "url": "/meditations/sittingmeditation.html"}, {"t": "Yoga 1", "url": "/meditations/yoga1.html"}],
+      "informal": "Communication Calendar: notice one difficult or meaningful conversation a day, and what you wanted, what they wanted, and how it went.",
+      "sheets": "week6",
+      "supplementary": [
+        {"t": "Empathy in Communication", "by": "Ann Weiser Cornell", "url": "https://www.youtube.com/watch?v=6YexJlNa9Tw", "min": 7},
+        {"t": "AH, FOWL: Transforming Anger", "by": "after Barbara De Angelis", "url": "/docs/AHFOWL.pdf"},
+        {"t": "Listening with Ears of the Heart", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=gFaXz9M0vrQ", "min": 12},
+        {"t": "What Really Makes Us Happy", "by": "Robert Waldinger", "url": "https://www.youtube.com/watch?v=8KkKuTCFvzI", "min": 13},
+        {"t": "Non-Violent Communication", "by": "Marshall Rosenberg", "url": "https://www.youtube.com/watch?v=ImaehABEZaY", "min": 6},
+        {"t": "E-Mail Is Easy to Write (and to Misread)", "by": "Daniel Goleman", "url": "/docs/email_goleman.pdf"},
+        {"t": "A 4-Step Guide to Ranting Productively", "by": "Carl Richards", "url": "/docs/RantingProductively-NYTimes.pdf"}
+      ]
+    },
+    {
+      "n": 7, "short": "Wk 7", "title": "Mindfulness and Compassion", "subtitle": "Lovingkindness & Walking meditations",
+      "page": "/MBSR/week7.html", "playlist": "PLbiVpU59JkVYF_BAo745jYWXM4k-0oxln", "pdf": "/MBSR/week7.pdf",
+      "summary": "Compassion, and especially self-compassion, is what makes the rest of mindfulness work. This week looks at our natural capacity for kindness and the myths that stop us using it on ourselves.",
+      "videos": [
+        {"t": "We Are Built To Be Kind", "by": "Dacher Keltner", "id": "SsWs6bf7tvI", "min": 4},
+        {"t": "Cultivating Altruism", "by": "Matthieu Ricard", "id": "I_eGPlZX4F4", "min": 18},
+        {"t": "How Mindfulness Cultivates Compassion", "by": "Shauna Shapiro", "id": "e94aKm2ShjQ", "min": 13},
+        {"t": "Overcoming Objections to Self-Compassion", "by": "Kristin Neff", "id": "lB2wGJ_RmdE", "min": 12},
+        {"t": "Radical Acceptance is a Prerequisite for Change", "by": "Tara Brach", "id": "FGphzXvD_9g", "min": 2}
+      ],
+      "readings": [
+        {"t": "Survival of the Kindest", "by": "Paul Ekman", "url": "/docs/survival-ekman.pdf"},
+        {"t": "Does Mindfulness Make You More Compassionate?", "by": "Shauna Shapiro", "url": "/docs/shapiro-compassion.pdf"},
+        {"t": "The Five Myths of Self-Compassion", "by": "Kristin Neff", "url": "/docs/five-myths-of-self-compassion.pdf"},
+        {"t": "Walking Meditation Instructions", "by": "Tara Brach", "url": "/docs/walking-meditation.pdf", "min": 3}
+      ],
+      "formal": ["One day: Lovingkindness Meditation", "One day: Walking Meditation (6 min of guidance, then continue on your own to 30 min)", "Other days: any practice you've learned"],
+      "formalLinks": [{"t": "Lovingkindness", "url": "/meditations/lovingkindness.html"}, {"t": "Walking", "url": "/meditations/walking-meditation.html"}],
+      "informal": "Any informal practice you've learned: simple awareness, mindful eating, STOP, “Turning Toward”, or mindful walking. Log one a day.",
+      "sheets": "week7",
+      "supplementary": [
+        {"t": "I'm On Your Side", "by": "Michael Franti", "url": "https://www.youtube.com/watch?v=95-MYnvF7h0", "min": 4},
+        {"t": "Self-Love: interview of Dave Potter", "by": "Yurika Vu", "url": "https://www.youtube.com/watch?v=tUIaTOKFN2Y", "min": 46},
+        {"t": "Be Kind. Always.", "by": "Jamie Derrick", "url": "https://www.youtube.com/watch?v=3NGmvynEmwc", "min": 9},
+        {"t": "Self-Compassion", "by": "Emma Seppala", "url": "/docs/Self-Compassion.pdf"},
+        {"t": "Disarming Our Hearts", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=8rt5mHiCAgQ", "min": 6},
+        {"t": "First, Forgive Yourself", "by": "Tara Brach", "url": "/docs/first-forgive-yourself.pdf"},
+        {"t": "The Practice of Forgiveness", "by": "Jack Kornfield", "url": "https://jackkornfield.com/the-practice-of-forgiveness/"},
+        {"t": "Mindfulness and Self-Compassion", "by": "Kristin Neff", "url": "https://www.youtube.com/watch?v=-oK8wuPQSiA", "min": 21},
+        {"t": "Making Friends with Yourself", "by": "after Pema Chödrön", "url": "/docs/friends-with-self.pdf"}
+      ]
+    },
+    {
+      "n": 8, "short": "Wk 8", "title": "Conclusion", "subtitle": "Developing a practice of your own",
+      "page": "/MBSR/week8.html", "playlist": "PLbiVpU59JkVYwWcoOV-Bx6ieMKpMlbBb0", "pdf": "/MBSR/week8.pdf",
+      "summary": "Time to notice what has shifted, often in subtle ways, and decide how you'll keep practising on your own. There are no practice sheets this week.",
+      "videos": [
+        {"t": "Gratitude", "by": "David Steindl-Rast", "id": "-Gm-G_4c5a8", "min": 5},
+        {"t": "Love Letters", "by": "Kaira Jewel Lingo", "id": "Gk6Cd7-9f_M", "min": 11},
+        {"t": "The 365 Grateful Project", "by": "Hailey Bartholomew", "id": "FswJIrzOIEk", "min": 12},
+        {"t": "How My Son Ruined My Life", "by": "Selma & James Baraz", "id": "ojF-o_eWp-o", "min": 7},
+        {"t": "Listening as an Act of Love", "by": "Jon Kabat-Zinn", "id": "TnJkVIO_adY", "min": 7},
+        {"t": "Grand Central Station", "by": "Sharon Salzberg", "id": "m0bg0fJRGfc", "min": 2}
+      ],
+      "readings": [
+        {"t": "Deepening a Personal Meditation Practice", "by": "Jon Kabat-Zinn", "url": "/docs/jkz_deepening.pdf", "min": 3},
+        {"t": "Suggestions for Daily Practice", "by": "Jon Kabat-Zinn", "url": "/docs/jkz_suggestions.pdf", "min": 3},
+        {"t": "In the Service of Life", "by": "Rachel Naomi Remen", "url": "/docs/remen-service.pdf"},
+        {"t": "The Rabbi's Gift", "by": "M. Scott Peck (or listen to the 6-min narration)", "url": "/docs/RabbisGift.pdf"}
+      ],
+      "formal": ["No set practice. Choose the practices that suit you and build them into your days."],
+      "formalLinks": [{"t": "All guided practices", "url": "/meditations/index.html"}, {"t": "Silent meditation timer", "url": "/meditations/silent30min.html"}],
+      "informal": "Ask yourself: what has changed since I began, and how will I keep practising on my own?",
+      "finish": [
+        {"t": "Request your Certificate of Completion", "url": "/MBSR/certificate.html", "by": "Send your practice sheets and a one-page reflection. Free."},
+        {"t": "Going Deeper: Graduate Explorations", "url": "/grads/graduate-explorations.html", "by": "25 optional modules for after the course"},
+        {"t": "Join a weekly Zoom meditation", "url": "/support/zoom.html", "by": "Practise with other students and graduates"}
+      ],
+      "supplementary": [
+        {"t": "Sanctuary", "by": "Jack Kornfield", "url": "https://www.youtube.com/watch?v=ZODoQgx8fMk", "min": 19},
+        {"t": "The Habits of Happiness", "by": "Matthieu Ricard", "url": "https://www.youtube.com/watch?v=l5-ZuB38hKY", "min": 20},
+        {"t": "The Happy Secret to Better Work", "by": "Shawn Achor", "url": "https://www.youtube.com/watch?v=fLJsdqxnZb0", "min": 12},
+        {"t": "Happiness", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=igGoRkOFbwM", "min": 20},
+        {"t": "Blowing Bubbles", "by": "Sharon Salzberg", "url": "https://www.youtube.com/watch?v=EPFx0EcEIKY", "min": 2},
+        {"t": "Layers of Awareness", "by": "Dave Potter", "url": "/docs/layers.pdf"}
+      ]
+    }
+  ]
+}

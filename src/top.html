@@ -1,0 +1,196 @@
+<title>Palouse Companion</title>
+<meta name="description" content="A week-by-week companion for the free Palouse Mindfulness MBSR course.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single-column "trail" app — resume card first, hill-contour week path, practice log, then the open week as stacked sections. */
+:root {
+  --bg: #f2f4ee;          /* pale loess field */
+  --surface: #fbfcf8;
+  --ink: #1d2721;
+  --muted: #5d6a61;
+  --line: #d9ded2;
+  --accent: #9a6b17;      /* ripe wheat */
+  --accent-soft: #f1e5c8;
+  --sage: #4f7461;        /* done / calm */
+  --sage-soft: #dce8df;
+  --dusk: #3f5a78;        /* links */
+  --shadow: 0 10px 30px rgba(29, 39, 33, .14);
+  --f-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141a16; --surface: #1b231e; --ink: #e6ebe3; --muted: #9daa9f; --line: #2d3a32;
+  --accent: #d9a84a; --accent-soft: #3a3020; --sage: #85b49b; --sage-soft: #24362b; --dusk: #9cb8d8;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #141a16; --surface: #1b231e; --ink: #e6ebe3; --muted: #9daa9f; --line: #2d3a32;
+  --accent: #d9a84a; --accent-soft: #3a3020; --sage: #85b49b; --sage-soft: #24362b; --dusk: #9cb8d8;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body); margin: 0; }
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 140px; display: grid; gap: 28px; }
+a { color: var(--dusk); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible, .stop:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--f-display); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); letter-spacing: -0.01em; }
+h2 { font-size: 1.55rem; }
+h3 { font-size: 1.1rem; font-family: var(--f-body); font-weight: 700; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow { font: 500 0.72rem/1.3 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* Header */
+header { display: grid; gap: 10px; }
+header p { color: var(--muted); }
+.sync { display: inline-flex; align-items: center; gap: 8px; font: 0.78rem/1.3 var(--f-mono); color: var(--muted); }
+.sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex: none; }
+.sync[data-mode="cloud"] i { background: var(--sage); }
+.sync[data-mode="local"] i { background: var(--accent); }
+
+/* Resume card */
+.resume { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 12px; }
+.resume .what { font-family: var(--f-display); font-size: 1.35rem; line-height: 1.2; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.resume .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.88rem; color: var(--muted); }
+.resume .behind { border-top: 1px solid var(--line); padding-top: 10px; font-size: 0.92rem; }
+.resume .behind button { background: none; border: 0; padding: 0; color: var(--dusk); text-decoration: underline; text-underline-offset: 3px; }
+
+/* Trail */
+.trail { position: relative; overflow-x: auto; }
+.trail svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.trail .stop { cursor: pointer; outline: none; }
+.trail .stop text { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
+.trail .stop.sel text { fill: var(--ink); font-weight: 500; }
+
+/* Practice log */
+.today { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 14px; }
+.today-row { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between; }
+.days { display: flex; gap: 8px; flex-wrap: wrap; }
+.day { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--line); background: transparent; font: 500 0.85rem var(--f-mono); color: var(--muted); display: grid; place-items: center; line-height: 1; padding: 0; }
+.day small { display: block; font-size: 0.58rem; margin-top: 2px; }
+.day[aria-pressed="true"] { background: var(--sage); border-color: var(--sage); color: var(--surface); }
+.meter { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.meter > span { display: block; height: 100%; background: var(--accent); transition: width .3s; }
+
+/* Week */
+.week-head { display: grid; gap: 8px; }
+.budget { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.budget div { background: var(--surface); padding: 12px 14px; display: grid; gap: 2px; }
+.budget b { font: 500 1.25rem var(--f-mono); font-variant-numeric: tabular-nums; }
+.budget small { color: var(--muted); font-size: 0.8rem; }
+.budget .total b { color: var(--accent); }
+
+section.block { display: grid; gap: 12px; }
+.block-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 15px; font-size: 0.9rem; text-decoration: none; color: var(--ink); display: inline-flex; gap: 6px; align-items: center; line-height: 1.2; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.btn.sage { background: var(--sage); border-color: var(--sage); color: var(--surface); }
+.btn[disabled] { opacity: .55; cursor: default; }
+
+ul.items { list-style: none; margin: 0; padding: 0; display: grid; }
+.item { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.item:last-child { border-bottom: 0; }
+.item > div { min-width: 0; }
+.item .t { font-weight: 700; }
+.item .t a { color: var(--ink); text-decoration-color: var(--line); }
+.item .by { color: var(--muted); font-size: 0.9rem; }
+.item .min { font: 0.85rem var(--f-mono); color: var(--muted); white-space: nowrap; padding-top: 2px; text-align: right; }
+.item .tools { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; font-size: 0.88rem; }
+.pos { font: 500 0.78rem var(--f-mono); color: var(--accent); }
+.check { width: 24px; height: 24px; border-radius: 6px; border: 1.5px solid var(--line); background: transparent; display: grid; place-items: center; margin-top: 1px; padding: 0; }
+.check[aria-pressed="true"] { background: var(--sage); border-color: var(--sage); }
+.check svg { width: 14px; height: 14px; stroke: var(--surface); stroke-width: 3; fill: none; opacity: 0; }
+.check[aria-pressed="true"] svg { opacity: 1; }
+.item.done .t { color: var(--muted); }
+.item.next { background: linear-gradient(90deg, var(--accent-soft), transparent 70%); border-radius: 6px; }
+.player { grid-column: 2 / -1; aspect-ratio: 16 / 9; max-width: 100%; width: 100%; border-radius: 8px; margin-top: 8px; overflow: hidden; background: #000; }
+.player iframe { width: 100%; height: 100%; border: 0; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--dusk); text-decoration: underline; text-underline-offset: 3px; font-size: 0.88rem; }
+
+.practice { background: var(--sage-soft); border-radius: var(--r); padding: 16px; display: grid; gap: 10px; }
+.practice ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
+.sheets { display: flex; flex-wrap: wrap; gap: 8px; }
+.note { background: var(--accent-soft); border-radius: var(--r); padding: 12px 14px; font-size: 0.95rem; }
+
+details { border-top: 1px solid var(--line); padding-top: 10px; }
+summary { cursor: pointer; font-weight: 700; }
+details ul { margin: 10px 0 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.95rem; }
+
+.next { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+
+/* Welcome-back sheet */
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+.sheet > div { pointer-events: auto; max-width: 560px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 12px; animation: up .25s ease-out; }
+@keyframes up { from { transform: translateY(16px); opacity: .6; } to { transform: none; opacity: 1; } }
+.sheet h3 { font-family: var(--f-display); font-size: 1.25rem; }
+.sheet .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sheet label { display: inline-flex; align-items: center; gap: 6px; }
+.sheet input[type="number"] { width: 4.2em; font: 500 0.95rem var(--f-mono); padding: 5px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.sheet ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 40vh; overflow: auto; }
+.sheet li label { display: flex; gap: 10px; align-items: flex-start; }
+.sheet input[type="checkbox"] { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--sage); }
+
+/* Backup */
+.backup { display: grid; gap: 8px; }
+.backup textarea { width: 100%; min-height: 64px; font: 0.78rem/1.4 var(--f-mono); padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); resize: vertical; }
+
+footer { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 10px; font-size: 0.88rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Free 8-week MBSR course · Palouse Mindfulness</span>
+    <h1>Palouse Companion</h1>
+    <p>Each week's videos, readings and daily practice in one place, with the time it takes and a record of what you've done. All content comes from <a href="https://palousemindfulness.com/" target="_blank" rel="noopener">palousemindfulness.com</a>, created by Dave Potter.</p>
+    <span class="sync" id="sync" data-mode="none"><i></i><span id="syncText">Loading your progress…</span></span>
+  </header>
+
+  <section class="resume" id="resume" aria-labelledby="resumeH" aria-live="polite"></section>
+
+  <nav class="trail" aria-label="Course weeks"><svg id="trail" viewBox="0 0 720 120" role="list"></svg></nav>
+
+  <section class="today" aria-labelledby="todayH">
+    <div class="today-row">
+      <h2 id="todayH">Your practice log</h2>
+      <span class="mono muted" id="todayMeta"></span>
+    </div>
+    <p id="todayText"></p>
+    <div class="row" id="logRow"></div>
+    <div class="days" id="days" aria-label="Practice days this week"></div>
+    <div>
+      <div class="meter" aria-hidden="true"><span id="meter" style="width:0"></span></div>
+      <p class="mono muted" style="font-size:.8rem;margin-top:6px" id="meterText"></p>
+    </div>
+  </section>
+
+  <main id="week" class="wrap" style="padding:0;max-width:none"></main>
+
+  <footer>
+    <p>This companion is an unofficial, open-source reader for the Palouse Mindfulness course. Every video, reading and practice belongs to its creators and to Palouse Mindfulness Inc. If the course is useful to you, consider <a href="https://palousemindfulness.com/about-us/contributions.html" target="_blank" rel="noopener">supporting it</a>.</p>
+    <p>Difficult feelings can come up during this work. If they feel like too much, take a break and talk to someone you trust or a counsellor. <a href="https://palousemindfulness.com/support/crisis-hotlines.html" target="_blank" rel="noopener">Crisis lines by country</a>.</p>
+    <details id="backupBox">
+      <summary>Move your progress to another device</summary>
+      <div class="backup">
+        <p>Copy this code on one device and paste it on another. Progress from both is combined, nothing is lost.</p>
+        <textarea id="backupOut" readonly aria-label="Your progress code"></textarea>
+        <div class="sheets"><button class="btn" id="copyCode">Copy code</button><span class="small" id="copyMsg" aria-live="polite"></span></div>
+        <textarea id="backupIn" aria-label="Paste a progress code" placeholder="Paste a progress code here"></textarea>
+        <div class="sheets"><button class="btn" id="restoreCode">Add this progress</button><span class="small" id="restoreMsg" aria-live="polite"></span></div>
+      </div>
+    </details>
+    <p><button class="linkbtn" id="reset">Reset all progress</button> <span id="resetConfirm" hidden>This clears every tick on every device. <button class="linkbtn" id="resetYes">Yes, clear it</button> · <button class="linkbtn" id="resetNo">Keep it</button></span></p>
+  </footer>
+</div>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="false" aria-labelledby="sheetH"><div id="sheetBody"></div></div>
