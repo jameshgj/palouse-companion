@@ -1,0 +1,14 @@
+{
+  "name": "Palouse Companion",
+  "short_name": "Palouse",
+  "description": "A daily companion for the free Palouse Mindfulness MBSR course.",
+  "start_url": "./#today",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f2f4ee",
+  "theme_color": "#f2f4ee",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

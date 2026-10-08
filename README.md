@@ -1,37 +1,34 @@
 # Palouse Companion
 
-An unofficial, open-source companion for the free 8-week [Palouse Mindfulness](https://palousemindfulness.com/) MBSR course created by Dave Potter.
+An unofficial, open-source daily companion app for the free 8-week [Palouse Mindfulness](https://palousemindfulness.com/) MBSR course created by Dave Potter.
 
-It puts each week's videos, readings, guided practices and practice sheets on one screen, shows how much time the week takes, and lets you tick things off as you go.
+**Try it:** https://jameshgj.github.io/palouse-companion/ (on iPhone, open in Safari, then Share → Add to Home Screen).
 
 ## What's here
 
-- `index.html`: the whole app in one file. Open it in a browser or host it on GitHub Pages.
-- `src/course.json`: every week's videos, readings, practices and sheets. Edit this to fix a link or add a language; an iOS app can read the same file.
-- `src/top.html`, `src/app.js`: the page and its logic. Run `python3 build.py` after editing to rebuild `index.html`.
+- `index.html`: the app as a standalone page. Host it on GitHub Pages, or load it in an iOS/Android web view.
+- `artifact.html`: the same app for the claude.ai preview.
+- `src/course.json`: every week's videos, readings, practice plan, guided practices and reflection prompts. Edit this to fix a link or add a language.
+- `src/top.html`, `src/app.js`: the page and its logic. Run `python3 build.py` after editing.
+- `manifest.webmanifest`, `icon-*.png`, `icon.svg`: let it install to a phone's home screen like an app.
 
 ## How it works
 
-- **Videos** link to the course's own YouTube playlists. When hosted somewhere that allows embeds (GitHub Pages, an app web view), each video also has a "Play here" button.
-- **Readings, practices and sheets** link straight to palousemindfulness.com, so content stays with its owners and stays current.
-- **Time estimates**: video lengths come from the course pages. Reading times are estimates (8 minutes each unless noted). Formal practice is 30 min × 6 days and informal practice about 5 min a day, as the course recommends.
-- **Picking up where you left off**: the top card shows the next thing to do in the week you were last active, today's practice, time left, and anything still open from earlier weeks. A gap of a few days gets a welcome-back note rather than a restart.
-- **Progress storage**: every tick, practice day and video position carries its own timestamp, so copies from different devices merge without losing anything (latest change wins per item).
-  - On claude.ai, progress saves to each viewer's private record and follows them across devices.
-  - On GitHub Pages or in an app, it saves in the browser. A progress code (footer) moves it to another device.
-- **YouTube**:
-  - Where embedding works (GitHub Pages, an app web view), "Play here" uses the YouTube player API. It saves your position every few seconds, resumes there next time, and marks the video done at 92%.
-  - Where it doesn't (sandboxed previews, or opening the YouTube app on a phone), the app remembers what you opened. When you come back it asks whether you finished, or where you stopped, and the next link starts at that spot (`&t=`). "Play all" asks which videos in the playlist you got through.
+- **Today** builds a daily session. Each week's videos and readings are spread across six practice days, so each day is roughly 10–20 minutes of learning plus that day's formal practice and an informal-practice log. Tap Start, then step through one screen at a time. The tracker at the top shows what's done and the time left.
+- **Formal practice** plays the course's guided audio or video inside the app, or runs a silent timer with bells. Afterwards you note how it went (a few tap-to-pick words and an optional note), which is the app's version of the practice sheet.
+- **Pacing** follows the course: one practice day per calendar day, and each week opens seven days after the previous one began. "Get ahead" lets you watch and read early; practice stays daily.
+- **Path** shows all eight weeks day by day. **Practices** has every guided meditation to use any time. **You** has your streak, totals, practice journal and progress sync.
+- **Media and readings** play inside the app when it's hosted: YouTube player API with saved positions, audio from palousemindfulness.com, readings in an in-app reader. Nothing is copied; everything is shown from its original source. In the claude.ai preview, which blocks other sites, the app opens them externally and asks how far you got when you return.
+- **Progress** is timestamped per item, so copies from different devices merge without loss. On claude.ai it saves to each viewer's account; elsewhere it saves on the device, and a progress code moves it.
 
-## Roadmap toward an app
+## Roadmap
 
-1. Host on GitHub Pages and add a web app manifest and icons so it installs to a home screen.
-2. Wrap in a native shell (Capacitor or SwiftUI with a web view) for iOS, keeping the JSON as the single source.
-3. Add practice reminders and an in-app practice timer.
-4. Offer it to Palouse Mindfulness to adopt, adapt or distribute.
+1. Wrap in a native shell (Capacitor or SwiftUI with a web view) for iOS, keeping `course.json` as the single source. Use SFSafariViewController or PDFKit for PDF readings, since iOS shows only the first page of a PDF inside a web frame.
+2. Practice reminders (local notifications) and offline support.
+3. Offer it to Palouse Mindfulness to adopt, adapt or distribute.
 
 ## Content and permission
 
-All course material belongs to Palouse Mindfulness Inc. and the original creators. This project only links to it and does not copy or redistribute videos, audio or documents. Before distributing any app build, get Palouse Mindfulness's agreement, especially for using their name or bundling any of their files.
+All course material belongs to Palouse Mindfulness Inc. and the original creators. This project links to and displays it from its original sources, and does not copy or redistribute videos, audio or documents. Before distributing an app build, get Palouse Mindfulness's agreement, especially for using their name.
 
 The code in this repository is MIT licensed.

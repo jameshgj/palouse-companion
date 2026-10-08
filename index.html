@@ -1,657 +1,1690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px)}</style>
+</head>
+<body>
 <title>Palouse Companion</title>
-<meta name="description" content="A week-by-week companion for the free Palouse Mindfulness MBSR course.">
+<meta name="description" content="A daily companion app for the free Palouse Mindfulness MBSR course.">
+<meta name="theme-color" content="#f2f4ee">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Palouse">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: a single-column "trail" app — resume card first, hill-contour week path, practice log, then the open week as stacked sections. */
+/* Layout: phone-first app shell. Four tabs (Today, Path, Practices, You) above a fixed tab bar; a full-screen session player steps through one item at a time. */
 :root {
   --bg: #f2f4ee;          /* pale loess field */
   --surface: #fbfcf8;
+  --raised: #ffffff;
   --ink: #1d2721;
   --muted: #5d6a61;
   --line: #d9ded2;
   --accent: #9a6b17;      /* ripe wheat */
+  --accent-ink: #fbfcf8;
   --accent-soft: #f1e5c8;
   --sage: #4f7461;        /* done / calm */
   --sage-soft: #dce8df;
   --dusk: #3f5a78;        /* links */
-  --shadow: 0 10px 30px rgba(29, 39, 33, .14);
+  --shadow: 0 10px 30px rgba(29, 39, 33, .12);
   --f-display: "Fraunces", Georgia, "Times New Roman", serif;
   --f-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
-  --r: 10px;
+  --r: 14px;
+  --tabbar: 64px;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #141a16; --surface: #1b231e; --ink: #e6ebe3; --muted: #9daa9f; --line: #2d3a32;
-  --accent: #d9a84a; --accent-soft: #3a3020; --sage: #85b49b; --sage-soft: #24362b; --dusk: #9cb8d8;
-  --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  --bg: #141a16; --surface: #1b231e; --raised: #212a24; --ink: #e6ebe3; --muted: #9daa9f; --line: #2d3a32;
+  --accent: #d9a84a; --accent-ink: #1b1608; --accent-soft: #3a3020; --sage: #85b49b; --sage-soft: #24362b; --dusk: #9cb8d8;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .45);
   color-scheme: dark; } }
 :root[data-theme="dark"] {
-  --bg: #141a16; --surface: #1b231e; --ink: #e6ebe3; --muted: #9daa9f; --line: #2d3a32;
-  --accent: #d9a84a; --accent-soft: #3a3020; --sage: #85b49b; --sage-soft: #24362b; --dusk: #9cb8d8;
-  --shadow: 0 10px 30px rgba(0, 0, 0, .5);
+  --bg: #141a16; --surface: #1b231e; --raised: #212a24; --ink: #e6ebe3; --muted: #9daa9f; --line: #2d3a32;
+  --accent: #d9a84a; --accent-ink: #1b1608; --accent-soft: #3a3020; --sage: #85b49b; --sage-soft: #24362b; --dusk: #9cb8d8;
+  --shadow: 0 10px 30px rgba(0, 0, 0, .45);
   color-scheme: dark; }
 
-* { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body); margin: 0; }
-.wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 140px; display: grid; gap: 28px; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.5 var(--f-body); margin: 0; }
 a { color: var(--dusk); text-underline-offset: 3px; }
-a:focus-visible, button:focus-visible, input:focus-visible, .stop:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
 h1, h2, h3 { font-family: var(--f-display); font-weight: 600; text-wrap: balance; margin: 0; line-height: 1.15; }
-h1 { font-size: clamp(1.9rem, 5vw, 2.6rem); letter-spacing: -0.01em; }
-h2 { font-size: 1.55rem; }
-h3 { font-size: 1.1rem; font-family: var(--f-body); font-weight: 700; }
-p { margin: 0; max-width: 65ch; }
-.eyebrow { font: 500 0.72rem/1.3 var(--f-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+h1 { font-size: 1.85rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.05rem; font-family: var(--f-body); font-weight: 700; }
+p { margin: 0; max-width: 62ch; }
+.eyebrow { font: 500 0.72rem/1.3 var(--f-mono); letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
 .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
-.small { font-size: 0.85rem; }
-button { font: inherit; color: inherit; cursor: pointer; }
+.small { font-size: 0.86rem; }
+.stack { display: grid; gap: 12px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.spread { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 
-/* Header */
-header { display: grid; gap: 10px; }
-header p { color: var(--muted); }
-.sync { display: inline-flex; align-items: center; gap: 8px; font: 0.78rem/1.3 var(--f-mono); color: var(--muted); }
+/* App shell */
+.app { max-width: 560px; margin: 0 auto; padding-inline: 16px; padding-block: 14px calc(var(--tabbar) + 32px); }
+.screen { display: grid; gap: 18px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 40px; }
+.brand { font-family: var(--f-display); font-weight: 600; font-size: 1.1rem; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font: 500 0.85rem var(--f-mono); }
+.pill svg { width: 16px; height: 16px; }
+.pill.hot { background: var(--accent-soft); border-color: transparent; color: var(--ink); }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 14px; }
+.card.hero { background: var(--raised); box-shadow: var(--shadow); border-color: transparent; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 9px 16px; font-size: 0.95rem; text-decoration: none; color: var(--ink); display: inline-flex; gap: 8px; align-items: center; justify-content: center; line-height: 1.2; min-height: 40px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700; }
+.btn.sage { background: var(--sage); border-color: var(--sage); color: var(--surface); font-weight: 700; }
+.btn.big { width: 100%; min-height: 52px; font-size: 1.05rem; border-radius: 14px; }
+.btn.ghost { background: transparent; border-color: transparent; color: var(--muted); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--dusk); text-decoration: underline; text-underline-offset: 3px; font-size: 0.9rem; }
+
+/* Day stepper */
+.stepper { display: flex; align-items: center; gap: 0; }
+.stepper .dot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--line); background: var(--surface); color: var(--muted); flex: none; }
+.stepper .dot svg { width: 16px; height: 16px; }
+.stepper .dot.done { background: var(--sage); border-color: var(--sage); color: var(--surface); }
+.stepper .dot.cur { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+.stepper .bar { flex: 1; height: 3px; background: var(--line); min-width: 8px; }
+.stepper .bar.done { background: var(--sage); }
+
+/* Step list */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; }
+.step { display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 10px 4px; border-top: 1px solid var(--line); background: none; border-left: 0; border-right: 0; border-bottom: 0; text-align: left; width: 100%; }
+.step:first-child { border-top: 0; }
+.step > div { min-width: 0; }
+.step .ic { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.step .ic svg { width: 18px; height: 18px; }
+.step.done .ic { background: var(--sage-soft); color: var(--sage); }
+.step .t { font-weight: 700; display: block; overflow-wrap: anywhere; }
+.step.done .t { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.step .s { font-size: 0.85rem; color: var(--muted); display: block; }
+.step .m { font: 0.82rem var(--f-mono); color: var(--muted); white-space: nowrap; }
+
+/* Week strip */
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.wd { display: grid; justify-items: center; gap: 4px; font: 0.72rem var(--f-mono); color: var(--muted); }
+.wd i { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-style: normal; font-weight: 500; color: var(--muted); background: var(--surface); }
+.wd.done i { background: var(--sage); border-color: var(--sage); color: var(--surface); }
+.wd.today i { border-color: var(--accent); color: var(--ink); }
+.wd.rest i { border-style: dashed; }
+
+.meter { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.meter > span { display: block; height: 100%; background: var(--sage); border-radius: 4px; transition: width .4s; }
+.note { background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; font-size: 0.93rem; }
+
+/* Tab bar */
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.tabbar nav { max-width: 560px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); height: var(--tabbar); }
+.tabbar a { display: grid; justify-items: center; align-content: center; gap: 3px; font-size: 0.72rem; color: var(--muted); text-decoration: none; }
+.tabbar a svg { width: 22px; height: 22px; }
+.tabbar a[aria-current="page"] { color: var(--accent); font-weight: 700; }
+
+/* Trail */
+.trail { overflow-x: auto; margin-inline: -4px; }
+.trail svg { display: block; width: 100%; min-width: 480px; height: auto; }
+.trail .stop { cursor: pointer; outline: none; }
+.trail .stop text { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
+.wk { display: grid; grid-template-columns: 44px 1fr auto; gap: 12px; align-items: center; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; width: 100%; }
+.wk > div { min-width: 0; }
+.wk .n { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; font: 500 1rem var(--f-mono); background: var(--bg); }
+.wk.cur { border-color: var(--accent); }
+.wk.done .n { background: var(--sage); color: var(--surface); }
+.budget { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.budget div { background: var(--surface); padding: 10px 12px; display: grid; gap: 1px; }
+.budget b { font: 500 1.05rem var(--f-mono); }
+.budget small { color: var(--muted); font-size: 0.75rem; }
+details { border-top: 1px solid var(--line); padding-top: 10px; }
+summary { cursor: pointer; font-weight: 700; }
+details ul { margin: 10px 0 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.93rem; }
+
+/* Practices tab */
+.plist { display: grid; gap: 10px; }
+.pr { display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; text-align: left; width: 100%; }
+.pr > div { min-width: 0; }
+.pr .ic { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--sage-soft); color: var(--sage); }
+.pr .ic svg { width: 20px; height: 20px; }
+
+/* Stats */
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: grid; gap: 2px; }
+.stat b { font: 500 1.6rem var(--f-mono); font-variant-numeric: tabular-nums; }
+.stat small { color: var(--muted); font-size: 0.8rem; }
+.journal { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.journal li { border-left: 3px solid var(--sage-soft); padding: 2px 0 2px 12px; }
+textarea, input[type="number"], input[type="text"] { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; }
+textarea { min-height: 84px; resize: vertical; }
+textarea.code { font: 0.78rem/1.4 var(--f-mono); min-height: 60px; }
+.sync { display: inline-flex; align-items: center; gap: 8px; font: 0.8rem/1.3 var(--f-mono); color: var(--muted); }
 .sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); flex: none; }
 .sync[data-mode="cloud"] i { background: var(--sage); }
 .sync[data-mode="local"] i { background: var(--accent); }
 
-/* Resume card */
-.resume { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 12px; }
-.resume .what { font-family: var(--f-display); font-size: 1.35rem; line-height: 1.2; }
-.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.resume .meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.88rem; color: var(--muted); }
-.resume .behind { border-top: 1px solid var(--line); padding-top: 10px; font-size: 0.92rem; }
-.resume .behind button { background: none; border: 0; padding: 0; color: var(--dusk); text-decoration: underline; text-underline-offset: 3px; }
+/* Session player */
+.session { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: grid; grid-template-rows: auto 1fr auto; padding-top: env(safe-area-inset-top, 0px); }
+.s-head { max-width: 640px; width: 100%; margin: 0 auto; padding: 12px 16px 8px; display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; }
+.icon-btn { width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; display: grid; place-items: center; color: var(--muted); }
+.icon-btn svg { width: 22px; height: 22px; }
+.segs { display: flex; gap: 4px; }
+.segs span { flex: 1; height: 8px; border-radius: 4px; background: var(--line); transition: background .3s; }
+.segs span.done { background: var(--sage); }
+.segs span.cur { background: var(--accent); }
+.s-left { font: 0.8rem var(--f-mono); color: var(--muted); white-space: nowrap; }
+.s-body { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.s-inner { max-width: 640px; margin: 0 auto; padding: 8px 16px 20px; display: grid; gap: 14px; align-content: start; min-height: 100%; }
+.s-foot { border-top: 1px solid var(--line); background: var(--surface); padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); }
+.s-foot > div { max-width: 640px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; }
+.player { width: 100%; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 12px; overflow: hidden; background: #000; }
+.player iframe, .player > div { width: 100%; height: 100%; border: 0; display: block; }
+.reader { width: 100%; height: 62vh; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.away { background: var(--surface); border: 1px dashed var(--line); border-radius: 12px; padding: 18px; display: grid; gap: 10px; justify-items: start; }
+.pos { font: 500 0.82rem var(--f-mono); color: var(--accent); }
 
-/* Trail */
-.trail { position: relative; overflow-x: auto; }
-.trail svg { display: block; width: 100%; min-width: 520px; height: auto; }
-.trail .stop { cursor: pointer; outline: none; }
-.trail .stop text { font-family: var(--f-mono); font-size: 11px; fill: var(--muted); }
-.trail .stop.sel text { fill: var(--ink); font-weight: 500; }
+/* Practice player */
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { border: 0; background: transparent; border-radius: 999px; padding: 6px 14px; font-size: 0.88rem; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.dial { display: grid; justify-items: center; gap: 10px; padding: 8px 0; }
+.dial .ring { position: relative; width: 210px; height: 210px; max-width: 70vw; max-height: 70vw; }
+.dial svg.r { width: 100%; height: 100%; transform: rotate(-90deg); }
+.dial .play { position: absolute; inset: 22%; border-radius: 50%; border: 0; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; box-shadow: var(--shadow); }
+.dial .play svg { width: 40%; height: 40%; }
+.dial .time { font: 500 1.5rem var(--f-mono); font-variant-numeric: tabular-nums; }
+.choices { display: grid; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 13px; font-size: 0.88rem; }
+.chip[aria-pressed="true"] { background: var(--sage); border-color: var(--sage); color: var(--surface); }
+.reflect { border-top: 1px solid var(--line); padding-top: 14px; display: grid; gap: 10px; }
 
-/* Practice log */
-.today { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; display: grid; gap: 14px; }
-.today-row { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; justify-content: space-between; }
-.days { display: flex; gap: 8px; flex-wrap: wrap; }
-.day { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--line); background: transparent; font: 500 0.85rem var(--f-mono); color: var(--muted); display: grid; place-items: center; line-height: 1; padding: 0; }
-.day small { display: block; font-size: 0.58rem; margin-top: 2px; }
-.day[aria-pressed="true"] { background: var(--sage); border-color: var(--sage); color: var(--surface); }
-.meter { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
-.meter > span { display: block; height: 100%; background: var(--accent); transition: width .3s; }
+/* Celebration */
+.cele { display: grid; justify-items: center; text-align: center; gap: 14px; padding-top: 6vh; }
+.cele svg.big { width: 140px; height: 140px; }
+.cele svg.big circle.fill { stroke-dasharray: 377; stroke-dashoffset: 377; animation: ringfill 1s .1s ease-out forwards; }
+@keyframes ringfill { to { stroke-dashoffset: 0; } }
 
-/* Week */
-.week-head { display: grid; gap: 8px; }
-.budget { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
-.budget div { background: var(--surface); padding: 12px 14px; display: grid; gap: 2px; }
-.budget b { font: 500 1.25rem var(--f-mono); font-variant-numeric: tabular-nums; }
-.budget small { color: var(--muted); font-size: 0.8rem; }
-.budget .total b { color: var(--accent); }
-
-section.block { display: grid; gap: 12px; }
-.block-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
-.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 7px 15px; font-size: 0.9rem; text-decoration: none; color: var(--ink); display: inline-flex; gap: 6px; align-items: center; line-height: 1.2; }
-.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
-.btn.sage { background: var(--sage); border-color: var(--sage); color: var(--surface); }
-.btn[disabled] { opacity: .55; cursor: default; }
-
-ul.items { list-style: none; margin: 0; padding: 0; display: grid; }
-.item { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: start; padding: 10px 0; border-bottom: 1px solid var(--line); }
-.item:last-child { border-bottom: 0; }
-.item > div { min-width: 0; }
-.item .t { font-weight: 700; }
-.item .t a { color: var(--ink); text-decoration-color: var(--line); }
-.item .by { color: var(--muted); font-size: 0.9rem; }
-.item .min { font: 0.85rem var(--f-mono); color: var(--muted); white-space: nowrap; padding-top: 2px; text-align: right; }
-.item .tools { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; font-size: 0.88rem; }
-.pos { font: 500 0.78rem var(--f-mono); color: var(--accent); }
-.check { width: 24px; height: 24px; border-radius: 6px; border: 1.5px solid var(--line); background: transparent; display: grid; place-items: center; margin-top: 1px; padding: 0; }
-.check[aria-pressed="true"] { background: var(--sage); border-color: var(--sage); }
-.check svg { width: 14px; height: 14px; stroke: var(--surface); stroke-width: 3; fill: none; opacity: 0; }
-.check[aria-pressed="true"] svg { opacity: 1; }
-.item.done .t { color: var(--muted); }
-.item.next { background: linear-gradient(90deg, var(--accent-soft), transparent 70%); border-radius: 6px; }
-.player { grid-column: 2 / -1; aspect-ratio: 16 / 9; max-width: 100%; width: 100%; border-radius: 8px; margin-top: 8px; overflow: hidden; background: #000; }
-.player iframe { width: 100%; height: 100%; border: 0; }
-.linkbtn { background: none; border: 0; padding: 0; color: var(--dusk); text-decoration: underline; text-underline-offset: 3px; font-size: 0.88rem; }
-
-.practice { background: var(--sage-soft); border-radius: var(--r); padding: 16px; display: grid; gap: 10px; }
-.practice ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
-.sheets { display: flex; flex-wrap: wrap; gap: 8px; }
-.note { background: var(--accent-soft); border-radius: var(--r); padding: 12px 14px; font-size: 0.95rem; }
-
-details { border-top: 1px solid var(--line); padding-top: 10px; }
-summary { cursor: pointer; font-weight: 700; }
-details ul { margin: 10px 0 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 0.95rem; }
-
-.next { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-
-/* Welcome-back sheet */
-.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
-.sheet > div { pointer-events: auto; max-width: 560px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 12px; animation: up .25s ease-out; }
+/* Come-back sheet */
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 0 12px calc(12px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+.sheet > div { pointer-events: auto; max-width: 560px; margin: 0 auto; background: var(--raised); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 18px; display: grid; gap: 12px; animation: up .25s ease-out; }
 @keyframes up { from { transform: translateY(16px); opacity: .6; } to { transform: none; opacity: 1; } }
-.sheet h3 { font-family: var(--f-display); font-size: 1.25rem; }
-.sheet .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.sheet label { display: inline-flex; align-items: center; gap: 6px; }
-.sheet input[type="number"] { width: 4.2em; font: 500 0.95rem var(--f-mono); padding: 5px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); }
+.sheet h3 { font-family: var(--f-display); font-size: 1.2rem; }
+.sheet input[type="number"] { width: 5em; padding: 6px 8px; }
 .sheet ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; max-height: 40vh; overflow: auto; }
 .sheet li label { display: flex; gap: 10px; align-items: flex-start; }
 .sheet input[type="checkbox"] { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--sage); }
 
-/* Backup */
-.backup { display: grid; gap: 8px; }
-.backup textarea { width: 100%; min-height: 64px; font: 0.78rem/1.4 var(--f-mono); padding: 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); resize: vertical; }
-
-footer { border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 10px; font-size: 0.88rem; color: var(--muted); }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+footer.about { display: grid; gap: 10px; font-size: 0.86rem; color: var(--muted); }
+@media (min-width: 700px) { .app { padding-top: 28px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } .cele svg.big circle.fill { stroke-dashoffset: 0; } }
 </style>
 
-<div class="wrap">
-  <header>
-    <span class="eyebrow">Free 8-week MBSR course · Palouse Mindfulness</span>
-    <h1>Palouse Companion</h1>
-    <p>Each week's videos, readings and daily practice in one place, with the time it takes and a record of what you've done. All content comes from <a href="https://palousemindfulness.com/" target="_blank" rel="noopener">palousemindfulness.com</a>, created by Dave Potter.</p>
-    <span class="sync" id="sync" data-mode="none"><i></i><span id="syncText">Loading your progress…</span></span>
-  </header>
-
-  <section class="resume" id="resume" aria-labelledby="resumeH" aria-live="polite"></section>
-
-  <nav class="trail" aria-label="Course weeks"><svg id="trail" viewBox="0 0 720 120" role="list"></svg></nav>
-
-  <section class="today" aria-labelledby="todayH">
-    <div class="today-row">
-      <h2 id="todayH">Your practice log</h2>
-      <span class="mono muted" id="todayMeta"></span>
-    </div>
-    <p id="todayText"></p>
-    <div class="row" id="logRow"></div>
-    <div class="days" id="days" aria-label="Practice days this week"></div>
-    <div>
-      <div class="meter" aria-hidden="true"><span id="meter" style="width:0"></span></div>
-      <p class="mono muted" style="font-size:.8rem;margin-top:6px" id="meterText"></p>
-    </div>
-  </section>
-
-  <main id="week" class="wrap" style="padding:0;max-width:none"></main>
-
-  <footer>
-    <p>This companion is an unofficial, open-source reader for the Palouse Mindfulness course. Every video, reading and practice belongs to its creators and to Palouse Mindfulness Inc. If the course is useful to you, consider <a href="https://palousemindfulness.com/about-us/contributions.html" target="_blank" rel="noopener">supporting it</a>.</p>
-    <p>Difficult feelings can come up during this work. If they feel like too much, take a break and talk to someone you trust or a counsellor. <a href="https://palousemindfulness.com/support/crisis-hotlines.html" target="_blank" rel="noopener">Crisis lines by country</a>.</p>
-    <details id="backupBox">
-      <summary>Move your progress to another device</summary>
-      <div class="backup">
-        <p>Copy this code on one device and paste it on another. Progress from both is combined, nothing is lost.</p>
-        <textarea id="backupOut" readonly aria-label="Your progress code"></textarea>
-        <div class="sheets"><button class="btn" id="copyCode">Copy code</button><span class="small" id="copyMsg" aria-live="polite"></span></div>
-        <textarea id="backupIn" aria-label="Paste a progress code" placeholder="Paste a progress code here"></textarea>
-        <div class="sheets"><button class="btn" id="restoreCode">Add this progress</button><span class="small" id="restoreMsg" aria-live="polite"></span></div>
-      </div>
-    </details>
-    <p><button class="linkbtn" id="reset">Reset all progress</button> <span id="resetConfirm" hidden>This clears every tick on every device. <button class="linkbtn" id="resetYes">Yes, clear it</button> · <button class="linkbtn" id="resetNo">Keep it</button></span></p>
-  </footer>
-</div>
-
+<div class="app" id="app"></div>
+<div class="tabbar"><nav id="tabs" aria-label="Sections"></nav></div>
+<div class="session" id="session" hidden role="dialog" aria-modal="true" aria-label="Session"></div>
 <div class="sheet" id="sheet" hidden role="dialog" aria-modal="false" aria-labelledby="sheetH"><div id="sheetBody"></div></div>
 
 <script id="course-data" type="application/json">
 {
-  "site": "https://palousemindfulness.com",
-  "readingMinutesEstimate": 8,
-  "practiceMinutesPerDay": 30,
-  "informalMinutesPerDay": 5,
-  "practiceDaysPerWeek": 6,
-  "weeks": [
+ "site": "https://palousemindfulness.com",
+ "readingMinutesEstimate": 8,
+ "practiceMinutesPerDay": 30,
+ "informalMinutesPerDay": 5,
+ "practiceDaysPerWeek": 6,
+ "weeks": [
+  {
+   "n": 0,
+   "short": "Start",
+   "title": "Getting Started",
+   "subtitle": "Before Week 1",
+   "page": "/MBSR/gettingstarted.html",
+   "summary": "Experience the Introduction, then five short setup steps. The whole course takes about 50 hours over eight or more weeks: roughly 2 hours of videos and reading per week, 30–35 minutes of formal practice a day, plus small informal practices.",
+   "steps": [
     {
-      "n": 0, "short": "Start", "title": "Getting Started", "subtitle": "Before Week 1",
-      "page": "/MBSR/gettingstarted.html",
-      "summary": "Experience the Introduction, then five short setup steps. The whole course takes about 50 hours over eight or more weeks: roughly 2 hours of videos and reading per week, 30–35 minutes of formal practice a day, plus small informal practices.",
-      "steps": [
-        {"t": "Experience the Introduction", "url": "/MBSR/week0.html", "min": 30, "by": "What mindfulness is and how the course works"},
-        {"t": "Fill in the Getting Started Questionnaire", "url": "https://forms.gle/tehMvSuefTrCZRXw8", "min": 5, "by": "Needed before Week 1 if you want a certificate; joins you to the community"},
-        {"t": "Complete the Goals & Commitment Worksheet", "url": "/docs/goals-commitment.pdf", "alt": "/docs/goals-commitment.docx", "min": 20, "by": "What you hope will change, and when and where you'll practise. For you only."},
-        {"t": "Skim the FAQ", "url": "/support/FAQ.html", "min": 10, "by": "Common questions about the course and practices"},
-        {"t": "Create a workbook (optional)", "url": "/MBSR/workbook.html", "min": 15, "by": "Printed pages to track progress and hold your practice sheets"},
-        {"t": "Look after your health", "url": "/support/FAQstrong.html", "min": 5, "by": "Modify any practice to suit your body. If things feel too hard, pause and get support."}
-      ]
+     "t": "Experience the Introduction",
+     "url": "/MBSR/week0.html",
+     "min": 30,
+     "by": "What mindfulness is and how the course works"
     },
     {
-      "n": 1, "short": "Wk 1", "title": "Simple Awareness", "subtitle": "Introduction to the Body Scan",
-      "page": "/MBSR/week1.html", "playlist": "PLbiVpU59JkVbNfFyAG4SrC8NGnC0-D4jg", "pdf": "/MBSR/week1.pdf",
-      "summary": "Paying attention to your inner experience with kindness and curiosity, and learning that a busy mind doesn't mean you're doing it wrong.",
-      "videos": [
-        {"t": "The Power of Mindfulness", "by": "Shauna Shapiro", "id": "IeblJdB2-Vo", "min": 13},
-        {"t": "Don't Try to be Mindful", "by": "Daron Larson", "id": "Y_27l2hMYvE", "min": 12},
-        {"t": "Mindfulness and the Body", "by": "Michelle Maldonado", "id": "2teP3DJKxaA", "min": 10},
-        {"t": "Befriending Our Bodies", "by": "Jon Kabat-Zinn", "id": "iS53roI_pWE", "min": 4},
-        {"t": "All Bodies are Beautiful", "by": "Amy Pence-Brown", "id": "wEGMn-XvtIE", "min": 4}
-      ],
-      "readings": [
-        {"t": "The Body Scan Meditation", "by": "Jon Kabat-Zinn", "url": "/docs/bodyscan.html"},
-        {"t": "10 Myths of Meditation", "by": "Melissa Eisler", "url": "/docs/ten-myths.html"},
-        {"t": "Mouthfuls of Mindfulness", "by": "Jan Chozen Bays", "url": "/docs/mouthfuls-mindfulness.html"}
-      ],
-      "formal": ["Day 1: Raisin Meditation (have two raisins and a glass of water ready)", "Days 2–6: Body Scan"],
-      "formalLinks": [{"t": "Raisin Meditation", "url": "/meditations/raisin.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}],
-      "informal": "Bring full awareness to one routine activity a day, such as washing dishes or eating a meal. Before bed, take five minutes to note it on your sheet.",
-      "sheets": "week1",
-      "supplementary": [
-        {"t": "Introduction to Mindful Eating", "by": "Michelle DuVal", "url": "https://www.youtube.com/watch?v=6tw93IgfL0U", "min": 10},
-        {"t": "What Would It Take for You to Be Still?", "by": "Catherine Price", "url": "/docs/what-would-it-take.pdf"},
-        {"t": "An Apple as Past, Present and Future", "by": "Susan Kaiser Greenland", "url": "https://www.youtube.com/watch?v=j2uooeprDkE", "min": 2},
-        {"t": "Managing Anxiety with Mindfulness", "by": "Rachel Green", "url": "https://www.youtube.com/watch?v=aSy9DZAJWIE", "min": 15},
-        {"t": "The Mindfulness-Based Eating Solution (book)", "by": "Lynn Rossy", "url": "https://lynnrossy.com/the-mindfulness-based-eating-solution/"}
-      ]
+     "t": "Fill in the Getting Started Questionnaire",
+     "url": "https://forms.gle/tehMvSuefTrCZRXw8",
+     "min": 5,
+     "by": "Needed before Week 1 if you want a certificate; joins you to the community"
     },
     {
-      "n": 2, "short": "Wk 2", "title": "Attention and the Brain", "subtitle": "Introduction to Sitting Meditation",
-      "page": "/MBSR/week2.html", "playlist": "PLbiVpU59JkValOIEIo2Y65mBopHCjKvBo", "pdf": "/MBSR/week2.pdf",
-      "summary": "How much we miss in a busy day, and how even weeks of practice can physically change the brain. Noticing that your attention has wandered is itself mindfulness.",
-      "videos": [
-        {"t": "The Monkey Business Illusion", "by": "Daniel Simons", "id": "IGQmdoK_ZfY", "min": 2},
-        {"t": "Mindfulness Practice", "by": "Michelle Maldonado", "id": "kr6ZFY_gVK8", "min": 17},
-        {"t": "Mindful Meditation and the Brain", "by": "Shauna Shapiro", "id": "R6hybxLidgA", "min": 6},
-        {"t": "How Meditation Can Reshape Our Brains", "by": "Sara Lazar", "id": "m8rRzTtP7Tc", "min": 8},
-        {"t": "Coming to Our Senses", "by": "Jon Kabat-Zinn", "id": "XNvZkepAiMo", "min": 9},
-        {"t": "All it takes is 10 Mindful Minutes", "by": "Andy Puddicombe", "id": "qzR62JJCMBQ", "min": 10}
-      ],
-      "readings": [
-        {"t": "Sitting Meditation", "by": "Jon Kabat-Zinn", "url": "/docs/sittingmeditation.html"},
-        {"t": "Joshua Bell plays a $3,000,000 violin", "by": "", "url": "/docs/joshua-bell.html"},
-        {"t": "How the Brain Rewires Itself", "by": "Sharon Begley", "url": "/docs/brain-rewires.html"},
-        {"t": "How Meditation Affects the Gray Matter of the Brain", "by": "David R. Hamilton", "url": "/docs/graymatter.html"}
-      ],
-      "formal": ["Alternate days: Sitting Meditation (breath as the anchor), then Body Scan"],
-      "formalLinks": [{"t": "Sitting Meditation", "url": "/meditations/sittingmeditation.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}],
-      "informal": "Pleasant Events Calendar: notice one pleasant moment a day, however small, and how it felt in body, thoughts and mood. Log it before sleep.",
-      "sheets": "week2",
-      "supplementary": [
-        {"t": "Life is Right Now", "by": "Jon Kabat-Zinn", "url": "https://www.youtube.com/watch?v=VGtJQNqMXBY", "min": 7},
-        {"t": "Why a Neuroscientist Would Study Meditation", "by": "Willoughby Britton", "url": "https://www.youtube.com/watch?v=ioCY_HKBFOc", "min": 10},
-        {"t": "Measuring Mindfulness", "by": "Judson Brewer", "url": "https://www.youtube.com/watch?v=wp9JD4APjSs", "min": 7},
-        {"t": "Whodunnit", "by": "Shamash Alidina", "url": "https://www.youtube.com/watch?v=8ctyBHr2HO0", "min": 4},
-        {"t": "Neuroscientist Richard Davidson's Wake-Up Call", "by": "Huffington Post", "url": "https://www.youtube.com/watch?v=_Gok2dUtdWE", "min": 5},
-        {"t": "Mastering Your Own Mind", "by": "Katherine Ellison", "url": "/docs/mastering.pdf"}
-      ]
+     "t": "Complete the Goals & Commitment Worksheet",
+     "url": "/docs/goals-commitment.pdf",
+     "alt": "/docs/goals-commitment.docx",
+     "min": 20,
+     "by": "What you hope will change, and when and where you'll practise. For you only."
     },
     {
-      "n": 3, "short": "Wk 3", "title": "Dealing with Thoughts", "subtitle": "Introduction to Yoga",
-      "page": "/MBSR/week3.html", "playlist": "PLbiVpU59JkVZzL8TqgU6Uz_HxhnMqpzZv", "pdf": "/MBSR/week3.pdf",
-      "summary": "Meditation isn't about getting rid of thoughts. It's about changing your relationship with them, and taking the striving out of practice.",
-      "videos": [
-        {"t": "Non-Striving", "by": "Jon Kabat-Zinn", "id": "Ye3xwfECuYc", "min": 3},
-        {"t": "Attention, Intention, Attitude", "by": "Shauna Shapiro", "id": "KsXNUpZnyg4", "min": 16},
-        {"t": "Your Thoughts are Bubbles", "by": "Jon Kabat-Zinn", "id": "w8Nsa45d0XE", "min": 5},
-        {"t": "Dealing with Thoughts", "by": "Tara Brach", "id": "9kNXhJf6jOM", "min": 20},
-        {"t": "The Samurai and the Fly", "by": "Hanjin Song", "id": "R5-HNXxc5kk", "min": 3}
-      ],
-      "readings": [
-        {"t": "Mindful Yoga", "by": "Jon Kabat-Zinn", "url": "/docs/yoga.pdf", "first": true},
-        {"t": "Meditation: It's Not What You Think", "by": "Jon Kabat-Zinn", "url": "/docs/JKZ_thinking.pdf"},
-        {"t": "I Hadn't Thought of That", "by": "Wes Nisker", "url": "/docs/nisker-thoughts.pdf"},
-        {"t": "Your Mind: Friend or Foe?", "by": "Jack Kornfield", "url": "/docs/your-mind-friend-or-foe.pdf"},
-        {"t": "The Reality Below Thoughts", "by": "Jack Kornfield", "url": "/docs/reality-below-thoughts.pdf"}
-      ],
-      "note": "Read “Mindful Yoga” before your first yoga session, even if you already practise yoga. The focus here is body awareness, not the exact pose.",
-      "formal": ["Alternate Mindful Yoga 1 and Sitting Meditation", "One day this week: Body Scan"],
-      "formalLinks": [{"t": "Mindful Yoga 1", "url": "/meditations/yoga1.html"}, {"t": "Sitting Meditation", "url": "/meditations/sittingmeditation.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}],
-      "informal": "Unpleasant Events Calendar: notice one unpleasant moment a day and how it showed up in body, thoughts and mood. Log it before sleep.",
-      "sheets": "week3",
-      "supplementary": [
-        {"t": "Thoughts: Real, but not True", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=iCrCmqeWHp4", "min": 26},
-        {"t": "Surrender to the Monkeys", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=H8yoWnEmTO8", "min": 4},
-        {"t": "Hands off the Controls", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=HZ8V3M-mXys", "min": 14},
-        {"t": "Freedom from Repetitive Thoughts", "by": "Jack Kornfield", "url": "https://jackkornfield.com/expand-field-attention/"},
-        {"t": "Letting Go in Meditation", "by": "Peter Russell and Shauna Shapiro", "url": "https://www.youtube.com/watch?v=H812bBkoHNk", "min": 15},
-        {"t": "Autobiography in Five Short Chapters", "by": "Portia Nelson", "url": "/docs/autobio_5chapters.pdf"},
-        {"t": "Transform Your Mind, Change Your Brain", "by": "Richard Davidson", "url": "https://www.youtube.com/watch?v=7tRdDqXgsJ0", "min": 65},
-        {"t": "Mindfulness, the Mind, and Addictive Behavior", "by": "Judson Brewer", "url": "https://www.youtube.com/watch?v=7a9sWI0vJzc", "min": 20}
-      ]
+     "t": "Skim the FAQ",
+     "url": "/support/FAQ.html",
+     "min": 10,
+     "by": "Common questions about the course and practices"
     },
     {
-      "n": 4, "short": "Wk 4", "title": "Responding vs. Reacting", "subtitle": "STOP: the one-minute breathing space",
-      "page": "/MBSR/week4.html", "playlist": "PLbiVpU59JkVZeQPQ1u5mS8U1c0V7J5OJU", "pdf": "/MBSR/week4.pdf",
-      "summary": "The physiology of stress, why it isn't always the enemy, and STOP, a one-minute practice you can use anywhere. This is the halfway point.",
-      "videos": [
-        {"t": "Stress: Portrait of a Killer (excerpt)", "by": "Robert Sapolsky", "id": "mbLFpPKG2x0", "min": 7},
-        {"t": "How Stress Affects Your Brain", "by": "Madhumita Murgia", "id": "WuyPuH9ojCE", "min": 4},
-        {"t": "How To Make Stress Your Friend", "by": "Kelly McGonigal", "id": "RcGyVTAoXEU", "min": 14},
-        {"t": "STOP: A Short Mindfulness Practice", "by": "Susan Bauer-Wu", "id": "WaszqhPCWX0", "min": 4},
-        {"t": "Using STOP", "by": "Dave Potter with Yurika Vu", "id": "AhoZug4WDpo", "min": 21}
-      ],
-      "readings": [
-        {"t": "Understanding the Stress Response", "by": "Harvard Health Publications", "url": "/docs/understanding-stress.pdf"},
-        {"t": "Harnessing the Upsides of Stress", "by": "Harvard Health Publications", "url": "/docs/harnessing-the-upsides.pdf"},
-        {"t": "STOP: One-Minute Breathing Space", "by": "Print it and put it somewhere you'll see it", "url": "/docs/STOP.pdf", "min": 2},
-        {"t": "The Magic Quarter Second", "by": "Tara Brach", "url": "/docs/magic-quarter-second.pdf"}
-      ],
-      "formal": ["Alternate Mindful Yoga 2 and Sitting Meditation"],
-      "formalLinks": [{"t": "Mindful Yoga 2", "url": "/meditations/yoga2.html"}, {"t": "Sitting Meditation", "url": "/meditations/sittingmeditation.html"}],
-      "informal": "Practise STOP during the day, ideally in the in-between moments (waiting in line, getting into the car) so it's there when stress hits. On your last day, fill in the Midway Self-Assessment instead.",
-      "sheets": "week4",
-      "extraSheets": [{"t": "Midway Self-Assessment", "url": "/docs/midway-assessment.pdf", "alt": "/docs/midway-assessment.docx"}],
-      "supplementary": [
-        {"t": "The Science of Anxiety", "by": "Time Magazine", "url": "/docs/science-of-anxiety.pdf"},
-        {"t": "The Anatomy of Fear", "by": "Discover Magazine", "url": "/docs/anatomy-of-fear.pdf"},
-        {"t": "When Is Stress Good for You", "by": "Bruce McEwen", "url": "https://aeon.co/essays/how-stress-works-in-the-human-body-to-make-or-break-us"},
-        {"t": "The Psychology of Stress", "by": "Robert Sapolsky", "url": "https://www.youtube.com/watch?v=r8-jOAsvj2c", "min": 3},
-        {"t": "Stress: Portrait of a Killer (longer version)", "by": "Robert Sapolsky", "url": "https://www.youtube.com/watch?v=a58RrLUs4YE", "min": 27},
-        {"t": "The Mindful Approach to Butterflies in Your Stomach", "by": "Jennifer Wolkin", "url": "http://www.mindful.org/mindful-approach-real-butterflies-stomach/"},
-        {"t": "The Other Brain Also Deals with Many Woes", "by": "Harriet Brown", "url": "/docs/otherbrain.pdf"}
-      ]
+     "t": "Create a workbook (optional)",
+     "url": "/MBSR/workbook.html",
+     "min": 15,
+     "by": "Printed pages to track progress and hold your practice sheets"
     },
     {
-      "n": 5, "short": "Wk 5", "title": "Difficult Emotions and Pain", "subtitle": "The “Turning Toward” meditations",
-      "page": "/MBSR/week5.html", "playlist": "PLbiVpU59JkVYtEL6-21TOfe3IELNMmOhO", "pdf": "/MBSR/week5.pdf",
-      "summary": "A counter-intuitive way to work with emotional or physical pain: gently exploring the difficulty rather than moving away from it, with self-compassion.",
-      "videos": [
-        {"t": "Turning Toward Difficulty", "by": "Vidyamala Burch", "id": "8aAATYSvNjc", "min": 6, "approx": true},
-        {"t": "One Moment at a Time", "by": "Vidyamala Burch", "id": "Ez9s124sL8I", "min": 6, "approx": true},
-        {"t": "The Gift and Power of Emotional Courage", "by": "Susan David", "id": "NDQ1Mi5I4rg", "min": 16},
-        {"t": "Pain × Resistance = Suffering", "by": "Tara Brach", "id": "O8-exWpcngc", "min": 8},
-        {"t": "Holding Your Feelings “Like a Baby”", "by": "Thupten Jinpa", "id": "HeSaxqnmezY", "min": 2},
-        {"t": "The Three Components of Self-Compassion", "by": "Kristin Neff", "id": "w3aba1ok5lE", "min": 6}
-      ],
-      "readings": [
-        {"t": "The Four Ways of Responding to Emotional or Physical Pain", "by": "Dave Potter", "url": "/docs/responding-to-difficulty.pdf"},
-        {"t": "“Turning Toward” Difficult Emotions", "by": "Guide for informal practice, option 1", "url": "/docs/turning-toward-emotional.pdf", "min": 3},
-        {"t": "“Turning Toward” Physical Pain", "by": "Guide for informal practice, option 2", "url": "/docs/turning-toward-physical.pdf", "min": 3},
-        {"t": "Radical Acceptance", "by": "Tara Brach", "url": "/docs/radical-acceptance.pdf"},
-        {"t": "The “Felt Sense” Prayer", "by": "as shared by Tara Brach", "url": "/docs/felt-sense-prayer.pdf", "min": 2}
-      ],
-      "note": "If you live with significant physical pain, also watch Tara Brach's “Working Skillfully with Pain” in the extra material below.",
-      "formal": ["Days 1–2: “Turning Toward” Meditation", "Days 3–6: any practice you've learned so far"],
-      "formalLinks": [{"t": "Turning Toward", "url": "/meditations/turning-toward.html"}],
-      "informal": "When an unwanted emotion or physical pain comes up during the day, practise “Turning Toward” it, using the two one-page guides in this week's reading.",
-      "sheets": "week5",
-      "supplementary": [
-        {"t": "Inner Listening: An Introduction to Focusing", "by": "Ann Weiser Cornell", "url": "/graduates/Inner-Listening.html"},
-        {"t": "Working Skillfully with Pain", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=XHlflWZSYlY", "min": 4},
-        {"t": "Guided Reflection on Inhabiting this Body", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=r73A9tXmAuY", "min": 13},
-        {"t": "Mindfulness and Painful Emotions", "by": "Steven Hayes", "url": "https://www.youtube.com/watch?v=SHnULfYKXcI", "min": 2},
-        {"t": "The Strange Case of Chronic Back Pain", "by": "Ron Siegel", "url": "/docs/siegel-backpain.pdf"},
-        {"t": "Dealing with Panic Attacks", "by": "Steven Hayes", "url": "https://www.youtube.com/watch?v=Kr7mhCCiSoY", "min": 3},
-        {"t": "Mindfulness and Physical Pain", "by": "Kelly McGonigal", "url": "https://www.youtube.com/watch?v=mCrsJIRtiqI", "min": 4},
-        {"t": "Awakening Self-Compassion", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=yXIOHYxllbc", "min": 23},
-        {"t": "Mindfulness-Based Pain Management", "by": "Vidyamala Burch", "url": "https://www.youtube.com/watch?v=N10_dcIZp2k", "min": 21},
-        {"t": "The Five-Step Model", "by": "Vidyamala Burch", "url": "/docs/vidyamala-5steps.pdf"}
-      ]
-    },
-    {
-      "n": 6, "short": "Wk 6", "title": "Mindfulness and Communication", "subtitle": "Mountain & Lake meditations",
-      "page": "/MBSR/week6.html", "playlist": "PLbiVpU59JkVaxox70z7TUv9eyriJ0galL", "pdf": "/MBSR/week6.pdf",
-      "summary": "Moving from your inner world to your relationships: deep listening, empathy, anger, and four ways people handle conflict.",
-      "videos": [
-        {"t": "Deep Listening", "by": "Frank Ostaseski", "id": "WjWiZ8WGZZA", "min": 3},
-        {"t": "The Power of Empathy in Communication", "by": "Ann Weiser Cornell", "id": "GD4lUGSKzlw", "min": 2},
-        {"t": "The Art of Being Heard", "by": "Susan Piver", "id": "WcIMs_4NavI", "min": 4},
-        {"t": "The Sacred Art of Listening", "by": "Tara Brach", "id": "39eFKcIi-JY", "min": 19},
-        {"t": "Awakening Through Conflict", "by": "Tara Brach", "id": "KCPYNfLWXxE", "min": 9},
-        {"t": "Blame", "by": "narrated by Brené Brown", "id": "TZpVTWiFlGw", "min": 3},
-        {"t": "Empathy", "by": "narrated by Brené Brown", "id": "1Evwgu369Jw", "min": 3}
-      ],
-      "readings": [
-        {"t": "The Sacred Art of Listening", "by": "Tara Brach", "url": "/docs/sacred-art-of-listening.pdf"},
-        {"t": "The Most Frequently Asked Question", "by": "Sylvia Boorstein", "url": "/docs/most-frequently-asked-Q.pdf"},
-        {"t": "The Answer to Anger", "by": "Pema Chödrön", "url": "/docs/anger-chodron.pdf"},
-        {"t": "Conflict Management Styles", "by": "Summary of the four styles", "url": "/docs/conflict_styles.pdf"},
-        {"t": "The Heart of Nonviolent Communication", "by": "Marshall Rosenberg", "url": "/docs/non-violent-communication.pdf"}
-      ],
-      "formal": ["Your choice each day: Body Scan, Sitting Meditation or Yoga", "At least once: Mountain or Lake Meditation (20 min; add 10 min of silence if you like)"],
-      "formalLinks": [{"t": "Mountain", "url": "/meditations/mountain.html"}, {"t": "Lake", "url": "/meditations/lake.html"}, {"t": "Body Scan", "url": "/meditations/bodyscan.html"}, {"t": "Sitting", "url": "/meditations/sittingmeditation.html"}, {"t": "Yoga 1", "url": "/meditations/yoga1.html"}],
-      "informal": "Communication Calendar: notice one difficult or meaningful conversation a day, and what you wanted, what they wanted, and how it went.",
-      "sheets": "week6",
-      "supplementary": [
-        {"t": "Empathy in Communication", "by": "Ann Weiser Cornell", "url": "https://www.youtube.com/watch?v=6YexJlNa9Tw", "min": 7},
-        {"t": "AH, FOWL: Transforming Anger", "by": "after Barbara De Angelis", "url": "/docs/AHFOWL.pdf"},
-        {"t": "Listening with Ears of the Heart", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=gFaXz9M0vrQ", "min": 12},
-        {"t": "What Really Makes Us Happy", "by": "Robert Waldinger", "url": "https://www.youtube.com/watch?v=8KkKuTCFvzI", "min": 13},
-        {"t": "Non-Violent Communication", "by": "Marshall Rosenberg", "url": "https://www.youtube.com/watch?v=ImaehABEZaY", "min": 6},
-        {"t": "E-Mail Is Easy to Write (and to Misread)", "by": "Daniel Goleman", "url": "/docs/email_goleman.pdf"},
-        {"t": "A 4-Step Guide to Ranting Productively", "by": "Carl Richards", "url": "/docs/RantingProductively-NYTimes.pdf"}
-      ]
-    },
-    {
-      "n": 7, "short": "Wk 7", "title": "Mindfulness and Compassion", "subtitle": "Lovingkindness & Walking meditations",
-      "page": "/MBSR/week7.html", "playlist": "PLbiVpU59JkVYF_BAo745jYWXM4k-0oxln", "pdf": "/MBSR/week7.pdf",
-      "summary": "Compassion, and especially self-compassion, is what makes the rest of mindfulness work. This week looks at our natural capacity for kindness and the myths that stop us using it on ourselves.",
-      "videos": [
-        {"t": "We Are Built To Be Kind", "by": "Dacher Keltner", "id": "SsWs6bf7tvI", "min": 4},
-        {"t": "Cultivating Altruism", "by": "Matthieu Ricard", "id": "I_eGPlZX4F4", "min": 18},
-        {"t": "How Mindfulness Cultivates Compassion", "by": "Shauna Shapiro", "id": "e94aKm2ShjQ", "min": 13},
-        {"t": "Overcoming Objections to Self-Compassion", "by": "Kristin Neff", "id": "lB2wGJ_RmdE", "min": 12},
-        {"t": "Radical Acceptance is a Prerequisite for Change", "by": "Tara Brach", "id": "FGphzXvD_9g", "min": 2}
-      ],
-      "readings": [
-        {"t": "Survival of the Kindest", "by": "Paul Ekman", "url": "/docs/survival-ekman.pdf"},
-        {"t": "Does Mindfulness Make You More Compassionate?", "by": "Shauna Shapiro", "url": "/docs/shapiro-compassion.pdf"},
-        {"t": "The Five Myths of Self-Compassion", "by": "Kristin Neff", "url": "/docs/five-myths-of-self-compassion.pdf"},
-        {"t": "Walking Meditation Instructions", "by": "Tara Brach", "url": "/docs/walking-meditation.pdf", "min": 3}
-      ],
-      "formal": ["One day: Lovingkindness Meditation", "One day: Walking Meditation (6 min of guidance, then continue on your own to 30 min)", "Other days: any practice you've learned"],
-      "formalLinks": [{"t": "Lovingkindness", "url": "/meditations/lovingkindness.html"}, {"t": "Walking", "url": "/meditations/walking-meditation.html"}],
-      "informal": "Any informal practice you've learned: simple awareness, mindful eating, STOP, “Turning Toward”, or mindful walking. Log one a day.",
-      "sheets": "week7",
-      "supplementary": [
-        {"t": "I'm On Your Side", "by": "Michael Franti", "url": "https://www.youtube.com/watch?v=95-MYnvF7h0", "min": 4},
-        {"t": "Self-Love: interview of Dave Potter", "by": "Yurika Vu", "url": "https://www.youtube.com/watch?v=tUIaTOKFN2Y", "min": 46},
-        {"t": "Be Kind. Always.", "by": "Jamie Derrick", "url": "https://www.youtube.com/watch?v=3NGmvynEmwc", "min": 9},
-        {"t": "Self-Compassion", "by": "Emma Seppala", "url": "/docs/Self-Compassion.pdf"},
-        {"t": "Disarming Our Hearts", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=8rt5mHiCAgQ", "min": 6},
-        {"t": "First, Forgive Yourself", "by": "Tara Brach", "url": "/docs/first-forgive-yourself.pdf"},
-        {"t": "The Practice of Forgiveness", "by": "Jack Kornfield", "url": "https://jackkornfield.com/the-practice-of-forgiveness/"},
-        {"t": "Mindfulness and Self-Compassion", "by": "Kristin Neff", "url": "https://www.youtube.com/watch?v=-oK8wuPQSiA", "min": 21},
-        {"t": "Making Friends with Yourself", "by": "after Pema Chödrön", "url": "/docs/friends-with-self.pdf"}
-      ]
-    },
-    {
-      "n": 8, "short": "Wk 8", "title": "Conclusion", "subtitle": "Developing a practice of your own",
-      "page": "/MBSR/week8.html", "playlist": "PLbiVpU59JkVYwWcoOV-Bx6ieMKpMlbBb0", "pdf": "/MBSR/week8.pdf",
-      "summary": "Time to notice what has shifted, often in subtle ways, and decide how you'll keep practising on your own. There are no practice sheets this week.",
-      "videos": [
-        {"t": "Gratitude", "by": "David Steindl-Rast", "id": "-Gm-G_4c5a8", "min": 5},
-        {"t": "Love Letters", "by": "Kaira Jewel Lingo", "id": "Gk6Cd7-9f_M", "min": 11},
-        {"t": "The 365 Grateful Project", "by": "Hailey Bartholomew", "id": "FswJIrzOIEk", "min": 12},
-        {"t": "How My Son Ruined My Life", "by": "Selma & James Baraz", "id": "ojF-o_eWp-o", "min": 7},
-        {"t": "Listening as an Act of Love", "by": "Jon Kabat-Zinn", "id": "TnJkVIO_adY", "min": 7},
-        {"t": "Grand Central Station", "by": "Sharon Salzberg", "id": "m0bg0fJRGfc", "min": 2}
-      ],
-      "readings": [
-        {"t": "Deepening a Personal Meditation Practice", "by": "Jon Kabat-Zinn", "url": "/docs/jkz_deepening.pdf", "min": 3},
-        {"t": "Suggestions for Daily Practice", "by": "Jon Kabat-Zinn", "url": "/docs/jkz_suggestions.pdf", "min": 3},
-        {"t": "In the Service of Life", "by": "Rachel Naomi Remen", "url": "/docs/remen-service.pdf"},
-        {"t": "The Rabbi's Gift", "by": "M. Scott Peck (or listen to the 6-min narration)", "url": "/docs/RabbisGift.pdf"}
-      ],
-      "formal": ["No set practice. Choose the practices that suit you and build them into your days."],
-      "formalLinks": [{"t": "All guided practices", "url": "/meditations/index.html"}, {"t": "Silent meditation timer", "url": "/meditations/silent30min.html"}],
-      "informal": "Ask yourself: what has changed since I began, and how will I keep practising on my own?",
-      "finish": [
-        {"t": "Request your Certificate of Completion", "url": "/MBSR/certificate.html", "by": "Send your practice sheets and a one-page reflection. Free."},
-        {"t": "Going Deeper: Graduate Explorations", "url": "/grads/graduate-explorations.html", "by": "25 optional modules for after the course"},
-        {"t": "Join a weekly Zoom meditation", "url": "/support/zoom.html", "by": "Practise with other students and graduates"}
-      ],
-      "supplementary": [
-        {"t": "Sanctuary", "by": "Jack Kornfield", "url": "https://www.youtube.com/watch?v=ZODoQgx8fMk", "min": 19},
-        {"t": "The Habits of Happiness", "by": "Matthieu Ricard", "url": "https://www.youtube.com/watch?v=l5-ZuB38hKY", "min": 20},
-        {"t": "The Happy Secret to Better Work", "by": "Shawn Achor", "url": "https://www.youtube.com/watch?v=fLJsdqxnZb0", "min": 12},
-        {"t": "Happiness", "by": "Tara Brach", "url": "https://www.youtube.com/watch?v=igGoRkOFbwM", "min": 20},
-        {"t": "Blowing Bubbles", "by": "Sharon Salzberg", "url": "https://www.youtube.com/watch?v=EPFx0EcEIKY", "min": 2},
-        {"t": "Layers of Awareness", "by": "Dave Potter", "url": "/docs/layers.pdf"}
-      ]
+     "t": "Look after your health",
+     "url": "/support/FAQstrong.html",
+     "min": 5,
+     "by": "Modify any practice to suit your body. If things feel too hard, pause and get support."
     }
-  ]
+   ]
+  },
+  {
+   "n": 1,
+   "short": "Wk 1",
+   "title": "Simple Awareness",
+   "subtitle": "Introduction to the Body Scan",
+   "page": "/MBSR/week1.html",
+   "playlist": "PLbiVpU59JkVbNfFyAG4SrC8NGnC0-D4jg",
+   "pdf": "/MBSR/week1.pdf",
+   "summary": "Paying attention to your inner experience with kindness and curiosity, and learning that a busy mind doesn't mean you're doing it wrong.",
+   "videos": [
+    {
+     "t": "The Power of Mindfulness",
+     "by": "Shauna Shapiro",
+     "id": "IeblJdB2-Vo",
+     "min": 13
+    },
+    {
+     "t": "Don't Try to be Mindful",
+     "by": "Daron Larson",
+     "id": "Y_27l2hMYvE",
+     "min": 12
+    },
+    {
+     "t": "Mindfulness and the Body",
+     "by": "Michelle Maldonado",
+     "id": "2teP3DJKxaA",
+     "min": 10
+    },
+    {
+     "t": "Befriending Our Bodies",
+     "by": "Jon Kabat-Zinn",
+     "id": "iS53roI_pWE",
+     "min": 4
+    },
+    {
+     "t": "All Bodies are Beautiful",
+     "by": "Amy Pence-Brown",
+     "id": "wEGMn-XvtIE",
+     "min": 4
+    }
+   ],
+   "readings": [
+    {
+     "t": "The Body Scan Meditation",
+     "by": "Jon Kabat-Zinn",
+     "url": "/docs/bodyscan.html"
+    },
+    {
+     "t": "10 Myths of Meditation",
+     "by": "Melissa Eisler",
+     "url": "/docs/ten-myths.html"
+    },
+    {
+     "t": "Mouthfuls of Mindfulness",
+     "by": "Jan Chozen Bays",
+     "url": "/docs/mouthfuls-mindfulness.html"
+    }
+   ],
+   "formal": [
+    "Day 1: Raisin Meditation (have two raisins and a glass of water ready)",
+    "Days 2–6: Body Scan"
+   ],
+   "formalLinks": [
+    {
+     "t": "Raisin Meditation",
+     "url": "/meditations/raisin.html"
+    },
+    {
+     "t": "Body Scan",
+     "url": "/meditations/bodyscan.html"
+    }
+   ],
+   "informal": "Bring full awareness to one routine activity a day, such as washing dishes or eating a meal. Before bed, take five minutes to note it on your sheet.",
+   "sheets": "week1",
+   "supplementary": [
+    {
+     "t": "Introduction to Mindful Eating",
+     "by": "Michelle DuVal",
+     "url": "https://www.youtube.com/watch?v=6tw93IgfL0U",
+     "min": 10
+    },
+    {
+     "t": "What Would It Take for You to Be Still?",
+     "by": "Catherine Price",
+     "url": "/docs/what-would-it-take.pdf"
+    },
+    {
+     "t": "An Apple as Past, Present and Future",
+     "by": "Susan Kaiser Greenland",
+     "url": "https://www.youtube.com/watch?v=j2uooeprDkE",
+     "min": 2
+    },
+    {
+     "t": "Managing Anxiety with Mindfulness",
+     "by": "Rachel Green",
+     "url": "https://www.youtube.com/watch?v=aSy9DZAJWIE",
+     "min": 15
+    },
+    {
+     "t": "The Mindfulness-Based Eating Solution (book)",
+     "by": "Lynn Rossy",
+     "url": "https://lynnrossy.com/the-mindfulness-based-eating-solution/"
+    }
+   ],
+   "prompt": "What routine activity did you bring full awareness to today? What did you notice?"
+  },
+  {
+   "n": 2,
+   "short": "Wk 2",
+   "title": "Attention and the Brain",
+   "subtitle": "Introduction to Sitting Meditation",
+   "page": "/MBSR/week2.html",
+   "playlist": "PLbiVpU59JkValOIEIo2Y65mBopHCjKvBo",
+   "pdf": "/MBSR/week2.pdf",
+   "summary": "How much we miss in a busy day, and how even weeks of practice can physically change the brain. Noticing that your attention has wandered is itself mindfulness.",
+   "videos": [
+    {
+     "t": "The Monkey Business Illusion",
+     "by": "Daniel Simons",
+     "id": "IGQmdoK_ZfY",
+     "min": 2
+    },
+    {
+     "t": "Mindfulness Practice",
+     "by": "Michelle Maldonado",
+     "id": "kr6ZFY_gVK8",
+     "min": 17
+    },
+    {
+     "t": "Mindful Meditation and the Brain",
+     "by": "Shauna Shapiro",
+     "id": "R6hybxLidgA",
+     "min": 6
+    },
+    {
+     "t": "How Meditation Can Reshape Our Brains",
+     "by": "Sara Lazar",
+     "id": "m8rRzTtP7Tc",
+     "min": 8
+    },
+    {
+     "t": "Coming to Our Senses",
+     "by": "Jon Kabat-Zinn",
+     "id": "XNvZkepAiMo",
+     "min": 9
+    },
+    {
+     "t": "All it takes is 10 Mindful Minutes",
+     "by": "Andy Puddicombe",
+     "id": "qzR62JJCMBQ",
+     "min": 10
+    }
+   ],
+   "readings": [
+    {
+     "t": "Sitting Meditation",
+     "by": "Jon Kabat-Zinn",
+     "url": "/docs/sittingmeditation.html"
+    },
+    {
+     "t": "Joshua Bell plays a $3,000,000 violin",
+     "by": "",
+     "url": "/docs/joshua-bell.html"
+    },
+    {
+     "t": "How the Brain Rewires Itself",
+     "by": "Sharon Begley",
+     "url": "/docs/brain-rewires.html"
+    },
+    {
+     "t": "How Meditation Affects the Gray Matter of the Brain",
+     "by": "David R. Hamilton",
+     "url": "/docs/graymatter.html"
+    }
+   ],
+   "formal": [
+    "Alternate days: Sitting Meditation (breath as the anchor), then Body Scan"
+   ],
+   "formalLinks": [
+    {
+     "t": "Sitting Meditation",
+     "url": "/meditations/sittingmeditation.html"
+    },
+    {
+     "t": "Body Scan",
+     "url": "/meditations/bodyscan.html"
+    }
+   ],
+   "informal": "Pleasant Events Calendar: notice one pleasant moment a day, however small, and how it felt in body, thoughts and mood. Log it before sleep.",
+   "sheets": "week2",
+   "supplementary": [
+    {
+     "t": "Life is Right Now",
+     "by": "Jon Kabat-Zinn",
+     "url": "https://www.youtube.com/watch?v=VGtJQNqMXBY",
+     "min": 7
+    },
+    {
+     "t": "Why a Neuroscientist Would Study Meditation",
+     "by": "Willoughby Britton",
+     "url": "https://www.youtube.com/watch?v=ioCY_HKBFOc",
+     "min": 10
+    },
+    {
+     "t": "Measuring Mindfulness",
+     "by": "Judson Brewer",
+     "url": "https://www.youtube.com/watch?v=wp9JD4APjSs",
+     "min": 7
+    },
+    {
+     "t": "Whodunnit",
+     "by": "Shamash Alidina",
+     "url": "https://www.youtube.com/watch?v=8ctyBHr2HO0",
+     "min": 4
+    },
+    {
+     "t": "Neuroscientist Richard Davidson's Wake-Up Call",
+     "by": "Huffington Post",
+     "url": "https://www.youtube.com/watch?v=_Gok2dUtdWE",
+     "min": 5
+    },
+    {
+     "t": "Mastering Your Own Mind",
+     "by": "Katherine Ellison",
+     "url": "/docs/mastering.pdf"
+    }
+   ],
+   "prompt": "What was today's pleasant moment? What did you notice in your body, your thoughts and your mood?"
+  },
+  {
+   "n": 3,
+   "short": "Wk 3",
+   "title": "Dealing with Thoughts",
+   "subtitle": "Introduction to Yoga",
+   "page": "/MBSR/week3.html",
+   "playlist": "PLbiVpU59JkVZzL8TqgU6Uz_HxhnMqpzZv",
+   "pdf": "/MBSR/week3.pdf",
+   "summary": "Meditation isn't about getting rid of thoughts. It's about changing your relationship with them, and taking the striving out of practice.",
+   "videos": [
+    {
+     "t": "Non-Striving",
+     "by": "Jon Kabat-Zinn",
+     "id": "Ye3xwfECuYc",
+     "min": 3
+    },
+    {
+     "t": "Attention, Intention, Attitude",
+     "by": "Shauna Shapiro",
+     "id": "KsXNUpZnyg4",
+     "min": 16
+    },
+    {
+     "t": "Your Thoughts are Bubbles",
+     "by": "Jon Kabat-Zinn",
+     "id": "w8Nsa45d0XE",
+     "min": 5
+    },
+    {
+     "t": "Dealing with Thoughts",
+     "by": "Tara Brach",
+     "id": "9kNXhJf6jOM",
+     "min": 20
+    },
+    {
+     "t": "The Samurai and the Fly",
+     "by": "Hanjin Song",
+     "id": "R5-HNXxc5kk",
+     "min": 3
+    }
+   ],
+   "readings": [
+    {
+     "t": "Mindful Yoga",
+     "by": "Jon Kabat-Zinn",
+     "url": "/docs/yoga.pdf",
+     "first": true
+    },
+    {
+     "t": "Meditation: It's Not What You Think",
+     "by": "Jon Kabat-Zinn",
+     "url": "/docs/JKZ_thinking.pdf"
+    },
+    {
+     "t": "I Hadn't Thought of That",
+     "by": "Wes Nisker",
+     "url": "/docs/nisker-thoughts.pdf"
+    },
+    {
+     "t": "Your Mind: Friend or Foe?",
+     "by": "Jack Kornfield",
+     "url": "/docs/your-mind-friend-or-foe.pdf"
+    },
+    {
+     "t": "The Reality Below Thoughts",
+     "by": "Jack Kornfield",
+     "url": "/docs/reality-below-thoughts.pdf"
+    }
+   ],
+   "note": "Read “Mindful Yoga” before your first yoga session, even if you already practise yoga. The focus here is body awareness, not the exact pose.",
+   "formal": [
+    "Alternate Mindful Yoga 1 and Sitting Meditation",
+    "One day this week: Body Scan"
+   ],
+   "formalLinks": [
+    {
+     "t": "Mindful Yoga 1",
+     "url": "/meditations/yoga1.html"
+    },
+    {
+     "t": "Sitting Meditation",
+     "url": "/meditations/sittingmeditation.html"
+    },
+    {
+     "t": "Body Scan",
+     "url": "/meditations/bodyscan.html"
+    }
+   ],
+   "informal": "Unpleasant Events Calendar: notice one unpleasant moment a day and how it showed up in body, thoughts and mood. Log it before sleep.",
+   "sheets": "week3",
+   "supplementary": [
+    {
+     "t": "Thoughts: Real, but not True",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=iCrCmqeWHp4",
+     "min": 26
+    },
+    {
+     "t": "Surrender to the Monkeys",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=H8yoWnEmTO8",
+     "min": 4
+    },
+    {
+     "t": "Hands off the Controls",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=HZ8V3M-mXys",
+     "min": 14
+    },
+    {
+     "t": "Freedom from Repetitive Thoughts",
+     "by": "Jack Kornfield",
+     "url": "https://jackkornfield.com/expand-field-attention/"
+    },
+    {
+     "t": "Letting Go in Meditation",
+     "by": "Peter Russell and Shauna Shapiro",
+     "url": "https://www.youtube.com/watch?v=H812bBkoHNk",
+     "min": 15
+    },
+    {
+     "t": "Autobiography in Five Short Chapters",
+     "by": "Portia Nelson",
+     "url": "/docs/autobio_5chapters.pdf"
+    },
+    {
+     "t": "Transform Your Mind, Change Your Brain",
+     "by": "Richard Davidson",
+     "url": "https://www.youtube.com/watch?v=7tRdDqXgsJ0",
+     "min": 65
+    },
+    {
+     "t": "Mindfulness, the Mind, and Addictive Behavior",
+     "by": "Judson Brewer",
+     "url": "https://www.youtube.com/watch?v=7a9sWI0vJzc",
+     "min": 20
+    }
+   ],
+   "prompt": "What was today's unpleasant moment? What did you notice in your body, your thoughts and your mood?"
+  },
+  {
+   "n": 4,
+   "short": "Wk 4",
+   "title": "Responding vs. Reacting",
+   "subtitle": "STOP: the one-minute breathing space",
+   "page": "/MBSR/week4.html",
+   "playlist": "PLbiVpU59JkVZeQPQ1u5mS8U1c0V7J5OJU",
+   "pdf": "/MBSR/week4.pdf",
+   "summary": "The physiology of stress, why it isn't always the enemy, and STOP, a one-minute practice you can use anywhere. This is the halfway point.",
+   "videos": [
+    {
+     "t": "Stress: Portrait of a Killer (excerpt)",
+     "by": "Robert Sapolsky",
+     "id": "mbLFpPKG2x0",
+     "min": 7
+    },
+    {
+     "t": "How Stress Affects Your Brain",
+     "by": "Madhumita Murgia",
+     "id": "WuyPuH9ojCE",
+     "min": 4
+    },
+    {
+     "t": "How To Make Stress Your Friend",
+     "by": "Kelly McGonigal",
+     "id": "RcGyVTAoXEU",
+     "min": 14
+    },
+    {
+     "t": "STOP: A Short Mindfulness Practice",
+     "by": "Susan Bauer-Wu",
+     "id": "WaszqhPCWX0",
+     "min": 4
+    },
+    {
+     "t": "Using STOP",
+     "by": "Dave Potter with Yurika Vu",
+     "id": "AhoZug4WDpo",
+     "min": 21
+    }
+   ],
+   "readings": [
+    {
+     "t": "Understanding the Stress Response",
+     "by": "Harvard Health Publications",
+     "url": "/docs/understanding-stress.pdf"
+    },
+    {
+     "t": "Harnessing the Upsides of Stress",
+     "by": "Harvard Health Publications",
+     "url": "/docs/harnessing-the-upsides.pdf"
+    },
+    {
+     "t": "STOP: One-Minute Breathing Space",
+     "by": "Print it and put it somewhere you'll see it",
+     "url": "/docs/STOP.pdf",
+     "min": 2
+    },
+    {
+     "t": "The Magic Quarter Second",
+     "by": "Tara Brach",
+     "url": "/docs/magic-quarter-second.pdf"
+    }
+   ],
+   "formal": [
+    "Alternate Mindful Yoga 2 and Sitting Meditation"
+   ],
+   "formalLinks": [
+    {
+     "t": "Mindful Yoga 2",
+     "url": "/meditations/yoga2.html"
+    },
+    {
+     "t": "Sitting Meditation",
+     "url": "/meditations/sittingmeditation.html"
+    }
+   ],
+   "informal": "Practise STOP during the day, ideally in the in-between moments (waiting in line, getting into the car) so it's there when stress hits. On your last day, fill in the Midway Self-Assessment instead.",
+   "sheets": "week4",
+   "extraSheets": [
+    {
+     "t": "Midway Self-Assessment",
+     "url": "/docs/midway-assessment.pdf",
+     "alt": "/docs/midway-assessment.docx"
+    }
+   ],
+   "supplementary": [
+    {
+     "t": "The Science of Anxiety",
+     "by": "Time Magazine",
+     "url": "/docs/science-of-anxiety.pdf"
+    },
+    {
+     "t": "The Anatomy of Fear",
+     "by": "Discover Magazine",
+     "url": "/docs/anatomy-of-fear.pdf"
+    },
+    {
+     "t": "When Is Stress Good for You",
+     "by": "Bruce McEwen",
+     "url": "https://aeon.co/essays/how-stress-works-in-the-human-body-to-make-or-break-us"
+    },
+    {
+     "t": "The Psychology of Stress",
+     "by": "Robert Sapolsky",
+     "url": "https://www.youtube.com/watch?v=r8-jOAsvj2c",
+     "min": 3
+    },
+    {
+     "t": "Stress: Portrait of a Killer (longer version)",
+     "by": "Robert Sapolsky",
+     "url": "https://www.youtube.com/watch?v=a58RrLUs4YE",
+     "min": 27
+    },
+    {
+     "t": "The Mindful Approach to Butterflies in Your Stomach",
+     "by": "Jennifer Wolkin",
+     "url": "http://www.mindful.org/mindful-approach-real-butterflies-stomach/"
+    },
+    {
+     "t": "The Other Brain Also Deals with Many Woes",
+     "by": "Harriet Brown",
+     "url": "/docs/otherbrain.pdf"
+    }
+   ],
+   "prompt": "When did you use STOP today, and what happened?",
+   "tasks": [
+    {
+     "t": "Midway Self-Assessment",
+     "by": "Three short questions on what you've noticed so far. Do it on your last practice day.",
+     "url": "/docs/midway-assessment.pdf",
+     "alt": "/docs/midway-assessment.docx",
+     "min": 10
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "short": "Wk 5",
+   "title": "Difficult Emotions and Pain",
+   "subtitle": "The “Turning Toward” meditations",
+   "page": "/MBSR/week5.html",
+   "playlist": "PLbiVpU59JkVYtEL6-21TOfe3IELNMmOhO",
+   "pdf": "/MBSR/week5.pdf",
+   "summary": "A counter-intuitive way to work with emotional or physical pain: gently exploring the difficulty rather than moving away from it, with self-compassion.",
+   "videos": [
+    {
+     "t": "Turning Toward Difficulty",
+     "by": "Vidyamala Burch",
+     "id": "8aAATYSvNjc",
+     "min": 6,
+     "approx": true
+    },
+    {
+     "t": "One Moment at a Time",
+     "by": "Vidyamala Burch",
+     "id": "Ez9s124sL8I",
+     "min": 6,
+     "approx": true
+    },
+    {
+     "t": "The Gift and Power of Emotional Courage",
+     "by": "Susan David",
+     "id": "NDQ1Mi5I4rg",
+     "min": 16
+    },
+    {
+     "t": "Pain × Resistance = Suffering",
+     "by": "Tara Brach",
+     "id": "O8-exWpcngc",
+     "min": 8
+    },
+    {
+     "t": "Holding Your Feelings “Like a Baby”",
+     "by": "Thupten Jinpa",
+     "id": "HeSaxqnmezY",
+     "min": 2
+    },
+    {
+     "t": "The Three Components of Self-Compassion",
+     "by": "Kristin Neff",
+     "id": "w3aba1ok5lE",
+     "min": 6
+    }
+   ],
+   "readings": [
+    {
+     "t": "The Four Ways of Responding to Emotional or Physical Pain",
+     "by": "Dave Potter",
+     "url": "/docs/responding-to-difficulty.pdf"
+    },
+    {
+     "t": "“Turning Toward” Difficult Emotions",
+     "by": "Guide for informal practice, option 1",
+     "url": "/docs/turning-toward-emotional.pdf",
+     "min": 3
+    },
+    {
+     "t": "“Turning Toward” Physical Pain",
+     "by": "Guide for informal practice, option 2",
+     "url": "/docs/turning-toward-physical.pdf",
+     "min": 3
+    },
+    {
+     "t": "Radical Acceptance",
+     "by": "Tara Brach",
+     "url": "/docs/radical-acceptance.pdf"
+    },
+    {
+     "t": "The “Felt Sense” Prayer",
+     "by": "as shared by Tara Brach",
+     "url": "/docs/felt-sense-prayer.pdf",
+     "min": 2
+    }
+   ],
+   "note": "If you live with significant physical pain, also watch Tara Brach's “Working Skillfully with Pain” in the extra material below.",
+   "formal": [
+    "Days 1–2: “Turning Toward” Meditation",
+    "Days 3–6: any practice you've learned so far"
+   ],
+   "formalLinks": [
+    {
+     "t": "Turning Toward",
+     "url": "/meditations/turning-toward.html"
+    }
+   ],
+   "informal": "When an unwanted emotion or physical pain comes up during the day, practise “Turning Toward” it, using the two one-page guides in this week's reading.",
+   "sheets": "week5",
+   "supplementary": [
+    {
+     "t": "Inner Listening: An Introduction to Focusing",
+     "by": "Ann Weiser Cornell",
+     "url": "/graduates/Inner-Listening.html"
+    },
+    {
+     "t": "Working Skillfully with Pain",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=XHlflWZSYlY",
+     "min": 4
+    },
+    {
+     "t": "Guided Reflection on Inhabiting this Body",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=r73A9tXmAuY",
+     "min": 13
+    },
+    {
+     "t": "Mindfulness and Painful Emotions",
+     "by": "Steven Hayes",
+     "url": "https://www.youtube.com/watch?v=SHnULfYKXcI",
+     "min": 2
+    },
+    {
+     "t": "The Strange Case of Chronic Back Pain",
+     "by": "Ron Siegel",
+     "url": "/docs/siegel-backpain.pdf"
+    },
+    {
+     "t": "Dealing with Panic Attacks",
+     "by": "Steven Hayes",
+     "url": "https://www.youtube.com/watch?v=Kr7mhCCiSoY",
+     "min": 3
+    },
+    {
+     "t": "Mindfulness and Physical Pain",
+     "by": "Kelly McGonigal",
+     "url": "https://www.youtube.com/watch?v=mCrsJIRtiqI",
+     "min": 4
+    },
+    {
+     "t": "Awakening Self-Compassion",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=yXIOHYxllbc",
+     "min": 23
+    },
+    {
+     "t": "Mindfulness-Based Pain Management",
+     "by": "Vidyamala Burch",
+     "url": "https://www.youtube.com/watch?v=N10_dcIZp2k",
+     "min": 21
+    },
+    {
+     "t": "The Five-Step Model",
+     "by": "Vidyamala Burch",
+     "url": "/docs/vidyamala-5steps.pdf"
+    }
+   ],
+   "prompt": "What did you turn toward today, an emotion or physical pain? What happened when you did?"
+  },
+  {
+   "n": 6,
+   "short": "Wk 6",
+   "title": "Mindfulness and Communication",
+   "subtitle": "Mountain & Lake meditations",
+   "page": "/MBSR/week6.html",
+   "playlist": "PLbiVpU59JkVaxox70z7TUv9eyriJ0galL",
+   "pdf": "/MBSR/week6.pdf",
+   "summary": "Moving from your inner world to your relationships: deep listening, empathy, anger, and four ways people handle conflict.",
+   "videos": [
+    {
+     "t": "Deep Listening",
+     "by": "Frank Ostaseski",
+     "id": "WjWiZ8WGZZA",
+     "min": 3
+    },
+    {
+     "t": "The Power of Empathy in Communication",
+     "by": "Ann Weiser Cornell",
+     "id": "GD4lUGSKzlw",
+     "min": 2
+    },
+    {
+     "t": "The Art of Being Heard",
+     "by": "Susan Piver",
+     "id": "WcIMs_4NavI",
+     "min": 4
+    },
+    {
+     "t": "The Sacred Art of Listening",
+     "by": "Tara Brach",
+     "id": "39eFKcIi-JY",
+     "min": 19
+    },
+    {
+     "t": "Awakening Through Conflict",
+     "by": "Tara Brach",
+     "id": "KCPYNfLWXxE",
+     "min": 9
+    },
+    {
+     "t": "Blame",
+     "by": "narrated by Brené Brown",
+     "id": "TZpVTWiFlGw",
+     "min": 3
+    },
+    {
+     "t": "Empathy",
+     "by": "narrated by Brené Brown",
+     "id": "1Evwgu369Jw",
+     "min": 3
+    }
+   ],
+   "readings": [
+    {
+     "t": "The Sacred Art of Listening",
+     "by": "Tara Brach",
+     "url": "/docs/sacred-art-of-listening.pdf"
+    },
+    {
+     "t": "The Most Frequently Asked Question",
+     "by": "Sylvia Boorstein",
+     "url": "/docs/most-frequently-asked-Q.pdf"
+    },
+    {
+     "t": "The Answer to Anger",
+     "by": "Pema Chödrön",
+     "url": "/docs/anger-chodron.pdf"
+    },
+    {
+     "t": "Conflict Management Styles",
+     "by": "Summary of the four styles",
+     "url": "/docs/conflict_styles.pdf"
+    },
+    {
+     "t": "The Heart of Nonviolent Communication",
+     "by": "Marshall Rosenberg",
+     "url": "/docs/non-violent-communication.pdf"
+    }
+   ],
+   "formal": [
+    "Your choice each day: Body Scan, Sitting Meditation or Yoga",
+    "At least once: Mountain or Lake Meditation (20 min; add 10 min of silence if you like)"
+   ],
+   "formalLinks": [
+    {
+     "t": "Mountain",
+     "url": "/meditations/mountain.html"
+    },
+    {
+     "t": "Lake",
+     "url": "/meditations/lake.html"
+    },
+    {
+     "t": "Body Scan",
+     "url": "/meditations/bodyscan.html"
+    },
+    {
+     "t": "Sitting",
+     "url": "/meditations/sittingmeditation.html"
+    },
+    {
+     "t": "Yoga 1",
+     "url": "/meditations/yoga1.html"
+    }
+   ],
+   "informal": "Communication Calendar: notice one difficult or meaningful conversation a day, and what you wanted, what they wanted, and how it went.",
+   "sheets": "week6",
+   "supplementary": [
+    {
+     "t": "Empathy in Communication",
+     "by": "Ann Weiser Cornell",
+     "url": "https://www.youtube.com/watch?v=6YexJlNa9Tw",
+     "min": 7
+    },
+    {
+     "t": "AH, FOWL: Transforming Anger",
+     "by": "after Barbara De Angelis",
+     "url": "/docs/AHFOWL.pdf"
+    },
+    {
+     "t": "Listening with Ears of the Heart",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=gFaXz9M0vrQ",
+     "min": 12
+    },
+    {
+     "t": "What Really Makes Us Happy",
+     "by": "Robert Waldinger",
+     "url": "https://www.youtube.com/watch?v=8KkKuTCFvzI",
+     "min": 13
+    },
+    {
+     "t": "Non-Violent Communication",
+     "by": "Marshall Rosenberg",
+     "url": "https://www.youtube.com/watch?v=ImaehABEZaY",
+     "min": 6
+    },
+    {
+     "t": "E-Mail Is Easy to Write (and to Misread)",
+     "by": "Daniel Goleman",
+     "url": "/docs/email_goleman.pdf"
+    },
+    {
+     "t": "A 4-Step Guide to Ranting Productively",
+     "by": "Carl Richards",
+     "url": "/docs/RantingProductively-NYTimes.pdf"
+    }
+   ],
+   "prompt": "Which conversation stood out today? What did you want, what did the other person want, and how did it go?"
+  },
+  {
+   "n": 7,
+   "short": "Wk 7",
+   "title": "Mindfulness and Compassion",
+   "subtitle": "Lovingkindness & Walking meditations",
+   "page": "/MBSR/week7.html",
+   "playlist": "PLbiVpU59JkVYF_BAo745jYWXM4k-0oxln",
+   "pdf": "/MBSR/week7.pdf",
+   "summary": "Compassion, and especially self-compassion, is what makes the rest of mindfulness work. This week looks at our natural capacity for kindness and the myths that stop us using it on ourselves.",
+   "videos": [
+    {
+     "t": "We Are Built To Be Kind",
+     "by": "Dacher Keltner",
+     "id": "SsWs6bf7tvI",
+     "min": 4
+    },
+    {
+     "t": "Cultivating Altruism",
+     "by": "Matthieu Ricard",
+     "id": "I_eGPlZX4F4",
+     "min": 18
+    },
+    {
+     "t": "How Mindfulness Cultivates Compassion",
+     "by": "Shauna Shapiro",
+     "id": "e94aKm2ShjQ",
+     "min": 13
+    },
+    {
+     "t": "Overcoming Objections to Self-Compassion",
+     "by": "Kristin Neff",
+     "id": "lB2wGJ_RmdE",
+     "min": 12
+    },
+    {
+     "t": "Radical Acceptance is a Prerequisite for Change",
+     "by": "Tara Brach",
+     "id": "FGphzXvD_9g",
+     "min": 2
+    }
+   ],
+   "readings": [
+    {
+     "t": "Survival of the Kindest",
+     "by": "Paul Ekman",
+     "url": "/docs/survival-ekman.pdf"
+    },
+    {
+     "t": "Does Mindfulness Make You More Compassionate?",
+     "by": "Shauna Shapiro",
+     "url": "/docs/shapiro-compassion.pdf"
+    },
+    {
+     "t": "The Five Myths of Self-Compassion",
+     "by": "Kristin Neff",
+     "url": "/docs/five-myths-of-self-compassion.pdf"
+    },
+    {
+     "t": "Walking Meditation Instructions",
+     "by": "Tara Brach",
+     "url": "/docs/walking-meditation.pdf",
+     "min": 3
+    }
+   ],
+   "formal": [
+    "One day: Lovingkindness Meditation",
+    "One day: Walking Meditation (6 min of guidance, then continue on your own to 30 min)",
+    "Other days: any practice you've learned"
+   ],
+   "formalLinks": [
+    {
+     "t": "Lovingkindness",
+     "url": "/meditations/lovingkindness.html"
+    },
+    {
+     "t": "Walking",
+     "url": "/meditations/walking-meditation.html"
+    }
+   ],
+   "informal": "Any informal practice you've learned: simple awareness, mindful eating, STOP, “Turning Toward”, or mindful walking. Log one a day.",
+   "sheets": "week7",
+   "supplementary": [
+    {
+     "t": "I'm On Your Side",
+     "by": "Michael Franti",
+     "url": "https://www.youtube.com/watch?v=95-MYnvF7h0",
+     "min": 4
+    },
+    {
+     "t": "Self-Love: interview of Dave Potter",
+     "by": "Yurika Vu",
+     "url": "https://www.youtube.com/watch?v=tUIaTOKFN2Y",
+     "min": 46
+    },
+    {
+     "t": "Be Kind. Always.",
+     "by": "Jamie Derrick",
+     "url": "https://www.youtube.com/watch?v=3NGmvynEmwc",
+     "min": 9
+    },
+    {
+     "t": "Self-Compassion",
+     "by": "Emma Seppala",
+     "url": "/docs/Self-Compassion.pdf"
+    },
+    {
+     "t": "Disarming Our Hearts",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=8rt5mHiCAgQ",
+     "min": 6
+    },
+    {
+     "t": "First, Forgive Yourself",
+     "by": "Tara Brach",
+     "url": "/docs/first-forgive-yourself.pdf"
+    },
+    {
+     "t": "The Practice of Forgiveness",
+     "by": "Jack Kornfield",
+     "url": "https://jackkornfield.com/the-practice-of-forgiveness/"
+    },
+    {
+     "t": "Mindfulness and Self-Compassion",
+     "by": "Kristin Neff",
+     "url": "https://www.youtube.com/watch?v=-oK8wuPQSiA",
+     "min": 21
+    },
+    {
+     "t": "Making Friends with Yourself",
+     "by": "after Pema Chödrön",
+     "url": "/docs/friends-with-self.pdf"
+    }
+   ],
+   "prompt": "Which informal practice did you use today, and what did you notice?"
+  },
+  {
+   "n": 8,
+   "short": "Wk 8",
+   "title": "Conclusion",
+   "subtitle": "Developing a practice of your own",
+   "page": "/MBSR/week8.html",
+   "playlist": "PLbiVpU59JkVYwWcoOV-Bx6ieMKpMlbBb0",
+   "pdf": "/MBSR/week8.pdf",
+   "summary": "Time to notice what has shifted, often in subtle ways, and decide how you'll keep practising on your own. There are no practice sheets this week.",
+   "videos": [
+    {
+     "t": "Gratitude",
+     "by": "David Steindl-Rast",
+     "id": "-Gm-G_4c5a8",
+     "min": 5
+    },
+    {
+     "t": "Love Letters",
+     "by": "Kaira Jewel Lingo",
+     "id": "Gk6Cd7-9f_M",
+     "min": 11
+    },
+    {
+     "t": "The 365 Grateful Project",
+     "by": "Hailey Bartholomew",
+     "id": "FswJIrzOIEk",
+     "min": 12
+    },
+    {
+     "t": "How My Son Ruined My Life",
+     "by": "Selma & James Baraz",
+     "id": "ojF-o_eWp-o",
+     "min": 7
+    },
+    {
+     "t": "Listening as an Act of Love",
+     "by": "Jon Kabat-Zinn",
+     "id": "TnJkVIO_adY",
+     "min": 7
+    },
+    {
+     "t": "Grand Central Station",
+     "by": "Sharon Salzberg",
+     "id": "m0bg0fJRGfc",
+     "min": 2
+    }
+   ],
+   "readings": [
+    {
+     "t": "Deepening a Personal Meditation Practice",
+     "by": "Jon Kabat-Zinn",
+     "url": "/docs/jkz_deepening.pdf",
+     "min": 3
+    },
+    {
+     "t": "Suggestions for Daily Practice",
+     "by": "Jon Kabat-Zinn",
+     "url": "/docs/jkz_suggestions.pdf",
+     "min": 3
+    },
+    {
+     "t": "In the Service of Life",
+     "by": "Rachel Naomi Remen",
+     "url": "/docs/remen-service.pdf"
+    },
+    {
+     "t": "The Rabbi's Gift",
+     "by": "M. Scott Peck (or listen to the 6-min narration)",
+     "url": "/docs/RabbisGift.pdf"
+    }
+   ],
+   "formal": [
+    "No set practice. Choose the practices that suit you and build them into your days."
+   ],
+   "formalLinks": [
+    {
+     "t": "All guided practices",
+     "url": "/meditations/index.html"
+    },
+    {
+     "t": "Silent meditation timer",
+     "url": "/meditations/silent30min.html"
+    }
+   ],
+   "informal": "Ask yourself: what has changed since I began, and how will I keep practising on my own?",
+   "finish": [
+    {
+     "t": "Request your Certificate of Completion",
+     "url": "/MBSR/certificate.html",
+     "by": "Send your practice sheets and a one-page reflection. Free."
+    },
+    {
+     "t": "Going Deeper: Graduate Explorations",
+     "url": "/grads/graduate-explorations.html",
+     "by": "25 optional modules for after the course"
+    },
+    {
+     "t": "Join a weekly Zoom meditation",
+     "url": "/support/zoom.html",
+     "by": "Practise with other students and graduates"
+    }
+   ],
+   "supplementary": [
+    {
+     "t": "Sanctuary",
+     "by": "Jack Kornfield",
+     "url": "https://www.youtube.com/watch?v=ZODoQgx8fMk",
+     "min": 19
+    },
+    {
+     "t": "The Habits of Happiness",
+     "by": "Matthieu Ricard",
+     "url": "https://www.youtube.com/watch?v=l5-ZuB38hKY",
+     "min": 20
+    },
+    {
+     "t": "The Happy Secret to Better Work",
+     "by": "Shawn Achor",
+     "url": "https://www.youtube.com/watch?v=fLJsdqxnZb0",
+     "min": 12
+    },
+    {
+     "t": "Happiness",
+     "by": "Tara Brach",
+     "url": "https://www.youtube.com/watch?v=igGoRkOFbwM",
+     "min": 20
+    },
+    {
+     "t": "Blowing Bubbles",
+     "by": "Sharon Salzberg",
+     "url": "https://www.youtube.com/watch?v=EPFx0EcEIKY",
+     "min": 2
+    },
+    {
+     "t": "Layers of Awareness",
+     "by": "Dave Potter",
+     "url": "/docs/layers.pdf"
+    }
+   ],
+   "prompt": "What has changed since you began the course? How will you keep practising?"
+  }
+ ],
+ "practices": {
+  "raisin": {
+   "t": "Raisin Meditation",
+   "min": 12,
+   "video": "_CZEEYMXr8Q",
+   "page": "/meditations/raisin.html",
+   "prep": "You'll need two raisins and a glass of water."
+  },
+  "bodyscan": {
+   "t": "Body Scan",
+   "min": 32,
+   "audio": "/disks/bodyscan.mp3",
+   "video": "6kFWd4wvi18",
+   "page": "/meditations/bodyscan.html",
+   "prep": "Lie down or sit somewhere comfortable where you won't be disturbed."
+  },
+  "sitting": {
+   "t": "Sitting Meditation",
+   "min": 32,
+   "audio": "/disks/sittingmeditation.mp3",
+   "video": "XRhqFWio3U0",
+   "page": "/meditations/sittingmeditation.html",
+   "prep": "Sit upright but relaxed, on a chair or cushion."
+  },
+  "yoga1": {
+   "t": "Mindful Yoga 1",
+   "min": 37,
+   "video": "Teo0f1ab1PY",
+   "audio": "/disks/yoga1.mp3",
+   "page": "/meditations/yoga1.html",
+   "prep": "Use the video the first few times so you can see the poses. Modify anything that hurts.",
+   "videoFirst": true
+  },
+  "yoga2": {
+   "t": "Mindful Yoga 2",
+   "min": 36,
+   "video": "gmdUOia58rY",
+   "audio": "/disks/yoga2.mp3",
+   "page": "/meditations/yoga2.html",
+   "prep": "Use the video the first few times so you can see the poses. Modify anything that hurts.",
+   "videoFirst": true
+  },
+  "tt-emotional": {
+   "t": "Turning Toward: Difficult Emotions",
+   "min": 23,
+   "audio": "/disks/turning-toward-emotional.mp3",
+   "video": "AP8Pwvkww24",
+   "page": "/meditations/turning-toward.html"
+  },
+  "tt-physical": {
+   "t": "Turning Toward: Physical Pain",
+   "min": 24,
+   "audio": "/disks/turning-toward-physical.mp3",
+   "video": "qMhkN-yVfQc",
+   "page": "/meditations/turning-toward.html"
+  },
+  "mountain": {
+   "t": "Mountain Meditation",
+   "min": 20,
+   "audio": "/disks/mountain.mp3",
+   "video": "9SwnJ6kqpa0",
+   "page": "/meditations/mountain.html",
+   "prep": "About 20 minutes. Add 10 minutes of silence afterwards if you'd like a full 30."
+  },
+  "lake": {
+   "t": "Lake Meditation",
+   "min": 20,
+   "audio": "/disks/lake.mp3",
+   "video": "3DoIOHb0unE",
+   "page": "/meditations/lake.html",
+   "prep": "About 20 minutes. Add 10 minutes of silence afterwards if you'd like a full 30."
+  },
+  "lovingkindness": {
+   "t": "Lovingkindness",
+   "min": 13,
+   "audio": "/disks/lovingkindness.mp3",
+   "video": "v1HdSkAJsRc",
+   "page": "/meditations/lovingkindness.html"
+  },
+  "walking": {
+   "t": "Walking Meditation",
+   "min": 6,
+   "audio": "/disks/walking-meditation.mp3",
+   "page": "/meditations/walking-meditation.html",
+   "prep": "6 minutes of guidance, then keep walking on your own to 30 minutes.",
+   "then": 24
+  },
+  "soften": {
+   "t": "Soften, Soothe, Allow",
+   "min": 15,
+   "audio": "/disks/soften-soothe-allow.mp3",
+   "page": "/meditations/soften-soothe-allow.html"
+  },
+  "rain": {
+   "t": "RAIN Meditation",
+   "min": 11,
+   "audio": "/disks/RAIN.mp3",
+   "video": "cQakZvcr-co",
+   "page": "/meditations/RAIN.html"
+  },
+  "silent": {
+   "t": "Silent Meditation",
+   "min": 30,
+   "audio": "/disks/silent30min.mp3",
+   "page": "/meditations/silent30min.html",
+   "prep": "Bells at the start and end, silence in between."
+  }
+ }
 }
 </script>
 <script>
 (() => {
   'use strict';
   const C = JSON.parse(document.getElementById('course-data').textContent);
-  const W = C.weeks;
+  const W = C.weeks, P = C.practices;
   const abs = u => /^https?:/.test(u) ? u : C.site + u;
   const now = () => Date.now();
   const DAY = 86400000;
-  // Inline YouTube needs a normal web origin (GitHub Pages, an app web view). Sandboxed previews open YouTube instead.
-  const canEmbed = /^https?:$/.test(location.protocol) && !/claude|anthropic/.test(location.hostname);
+  const DAYS = C.practiceDaysPerWeek;
+  // Media and readings play inside the app on a normal web origin (GitHub Pages, an iOS/Android web view).
+  // Sandboxed previews (claude.ai) block other sites, so there the app falls back to opening them and asking how it went.
+  const HOSTED = /^https?:$/.test(location.protocol) && !/claude|anthropic/i.test(location.hostname);
 
-  // ---------------------------------------------------------------- course index
+  // ================================================================ icons
+  const ICON = {
+    video: '<path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/>',
+    read: '<path d="M4 5.5c2.5-1 5-1 8 1 3-2 5.5-2 8-1v13c-2.5-1-5-1-8 1-3-2-5.5-2-8-1z"/><path d="M12 6.5v13"/>',
+    task: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/>',
+    finish: '<path d="M6 21V4h11l-2 4 2 4H6"/>',
+    practice: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/>',
+    informal: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 7l3 3"/>',
+    check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    close: '<path d="M6 6l12 12M18 6L6 18"/>',
+    back: '<path d="M15 5l-7 7 7 7"/>',
+    play: '<path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/>',
+    pause: '<rect x="6.5" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/>',
+    leaf: '<path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l8-8"/>',
+    today: '<circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/>',
+    path: '<path d="M4 18c3-6 6 0 9-6s5-3 7-6"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/>',
+    lib: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.2"/>',
+    you: '<circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>',
+    timer: '<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 1.5M10 3h4"/>'
+  };
+  const icon = (n, cls) => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('fill', 'none'); s.setAttribute('stroke', 'currentColor'); s.setAttribute('stroke-width', '2'); s.setAttribute('stroke-linecap', 'round'); s.setAttribute('stroke-linejoin', 'round'); s.setAttribute('aria-hidden', 'true'); if (cls) s.setAttribute('class', cls); s.innerHTML = ICON[n] || ''; return s; };
+
+  // ================================================================ course index
   const readMin = r => r.min || C.readingMinutesEstimate;
-  const ytUrl = (id, list, pos) => `https://www.youtube.com/watch?v=${id}${list ? '&list=' + list : ''}${pos > 5 ? '&t=' + Math.floor(pos) + 's' : ''}`;
   const ITEMS = {}, ORDER = {};
   W.forEach(w => {
     const list = [];
-    (w.steps || []).forEach((s, i) => list.push({ key: `0s${i}`, kind: 'step', title: s.t, by: s.by, url: abs(s.url), alt: s.alt && abs(s.alt), min: s.min, optional: /optional/i.test(s.t) }));
+    (w.steps || []).forEach((s, i) => list.push({ key: `0s${i}`, kind: /questionnaire|worksheet|workbook/i.test(s.t) ? 'task' : 'read', title: s.t, by: s.by, url: s.url, alt: s.alt, min: s.min, optional: /optional/i.test(s.t) }));
     (w.videos || []).forEach((v, i) => list.push({ key: `${w.n}v${i}`, kind: 'video', title: v.t, by: v.by, id: v.id, min: v.min, approx: v.approx }));
-    (w.readings || []).forEach((r, i) => list.push({ key: `${w.n}r${i}`, kind: 'read', title: r.t, by: (r.first ? 'Read this first. ' : '') + (r.by || ''), url: abs(r.url), min: readMin(r) }));
-    (w.finish || []).forEach((f, i) => list.push({ key: `8f${i}`, kind: 'finish', title: f.t, by: f.by, url: abs(f.url), optional: i > 0 }));
+    (w.readings || []).forEach((r, i) => list.push({ key: `${w.n}r${i}`, kind: 'read', title: r.t, by: r.by || '', url: r.url, min: readMin(r), first: i === 0 }));
+    (w.tasks || []).forEach((t, i) => list.push({ key: `${w.n}t${i}`, kind: 'task', title: t.t, by: t.by, url: t.url, alt: t.alt, min: t.min }));
+    (w.finish || []).forEach((f, i) => list.push({ key: `8f${i}`, kind: 'finish', title: f.t, by: f.by, url: f.url, optional: i > 0 }));
     list.forEach(x => { x.week = w.n; ITEMS[x.key] = x; });
     ORDER[w.n] = list;
   });
-  const hasLog = w => w.n >= 1 && w.n <= 7;
-  const DAYS = C.practiceDaysPerWeek;
-  const PRACTICE_MIN = C.practiceMinutesPerDay + C.informalMinutesPerDay;
-  const kindLabel = { video: 'Video', read: 'Reading', step: 'Getting started', finish: 'Finishing up' };
+  const hasLog = n => n >= 1;
+  const required = n => ORDER[n].filter(x => !x.optional);
 
-  // ---------------------------------------------------------------- state + merge
-  // Every entry carries its own timestamp, so progress from two devices merges cleanly (latest change wins per item).
-  const blank = () => ({ v: 2, items: {}, days: {}, weekStart: {}, pending: null, pendingAt: 0, last: null, resetAt: 0 });
+  // Spread a week's videos and readings across its six practice days, in order, balancing minutes.
+  const PLAN = {};
+  function plan(n) {
+    if (PLAN[n]) return PLAN[n];
+    const vids = ORDER[n].filter(x => x.kind === 'video'), reads = ORDER[n].filter(x => x.kind === 'read');
+    const seq = [];
+    if (reads[0]) seq.push(reads[0]);
+    const rest = reads.slice(1); let vi = 0, ri = 0;
+    while (vi < vids.length || ri < rest.length) { if (vi < vids.length) seq.push(vids[vi++]); if (vi < vids.length) seq.push(vids[vi++]); if (ri < rest.length) seq.push(rest[ri++]); }
+    const tot = seq.reduce((a, x) => a + x.min, 0), tgt = tot / DAYS || 1;
+    const days = Array.from({ length: DAYS }, () => []);
+    let cum = 0;
+    seq.forEach(x => { days[Math.min(DAYS - 1, Math.floor((cum + x.min / 2) / tgt))].push(x.key); cum += x.min; });
+    ORDER[n].filter(x => x.kind === 'task' || x.kind === 'finish').forEach(x => days[DAYS - 1].push(x.key));
+    return (PLAN[n] = days);
+  }
+  const dayOfItem = k => { const n = ITEMS[k].week; if (!n) return 0; return plan(n).findIndex(d => d.includes(k)); };
+
+  // What each practice day asks for (from the course's weekly instructions).
+  const learned = n => {
+    const base = ['bodyscan', 'sitting'];
+    if (n > 3) base.push('yoga1'); if (n > 4) base.push('yoga2');
+    if (n > 5) base.push('tt-emotional', 'tt-physical'); if (n > 6) base.push('mountain', 'lake');
+    if (n > 7) base.push('lovingkindness', 'walking');
+    return base;
+  };
+  function dayPractice(n, d) {
+    switch (n) {
+      case 1: return d === 0 ? ['raisin'] : ['bodyscan'];
+      case 2: return d % 2 === 0 ? ['sitting'] : ['bodyscan'];
+      case 3: return d === 5 ? ['bodyscan'] : d % 2 === 0 ? ['yoga1'] : ['sitting'];
+      case 4: return d % 2 === 0 ? ['yoga2'] : ['sitting'];
+      case 5: return d < 2 ? ['tt-emotional', 'tt-physical'] : learned(5).concat('tt-emotional', 'tt-physical');
+      case 6: return d === 0 ? ['mountain', 'lake'] : ['bodyscan', 'sitting', 'yoga1', 'yoga2'];
+      case 7: return d === 0 ? ['lovingkindness'] : d === 1 ? ['walking'] : learned(8);
+      default: return learned(8).concat('rain', 'soften', 'silent');
+    }
+  }
+  const practiceLabel = (n, d) => { const ids = dayPractice(n, d); return ids.length === 1 ? P[ids[0]].t : ids.length === 2 ? `${P[ids[0]].t} or ${P[ids[1]].t.replace(/^Turning Toward: /, '')}` : 'Your choice of practice'; };
+
+  // ================================================================ state
+  // Every entry carries its own timestamp, so copies from different devices merge without loss.
+  const blank = () => ({ v: 3, items: {}, days: {}, inf: {}, free: {}, weekStart: {}, pending: null, pendingAt: 0, last: null, resetAt: 0 });
   let S = blank();
-
   const stable = o => JSON.stringify(o, (k, v) => (v && typeof v === 'object' && !Array.isArray(v)) ? Object.keys(v).sort().reduce((a, x) => (a[x] = v[x], a), {}) : v);
+  function upgrade(s) {
+    if (!s || typeof s !== 'object') return blank();
+    if (s.v === 3 || s.v === 2) return Object.assign(blank(), s, { v: 3 });
+    if (s.done) { const o = blank(); Object.keys(s.done).forEach(k => { if (s.done[k]) o.items[k] = { done: true, at: 1 }; }); Object.entries(s.days || {}).forEach(([w, a]) => (a || []).forEach((v, d) => { if (v) (o.days[w] = o.days[w] || {})[d] = { done: true, at: 1 }; })); return o; }
+    return blank();
+  }
   function merge(a, b) {
-    a = a || blank(); b = b || blank();
+    a = upgrade(a); b = upgrade(b);
     const R = Math.max(a.resetAt || 0, b.resetAt || 0);
     const out = blank(); out.resetAt = R;
     const live = e => e && Math.max(e.at || 0, e.posAt || 0) >= R;
-    const later = (x, y, f = 'at') => !live(x) ? (live(y) ? y : null) : !live(y) ? x : ((y[f] || 0) > (x[f] || 0) ? y : x);
+    const pick = (x, y) => !live(x) ? (live(y) ? y : null) : !live(y) ? x : ((y.at || 0) > (x.at || 0) ? y : x);
     const keys = (p, q) => [...new Set([...Object.keys(p || {}), ...Object.keys(q || {})])];
     for (const k of keys(a.items, b.items)) {
-      const x = a.items?.[k], y = b.items?.[k];
-      const d = later(x, y, 'at'); if (!d) continue;
+      const x = a.items[k], y = b.items[k], d = pick(x, y); if (!d) continue;
       const e = { done: !!d.done, at: d.at || 0 };
-      const withPos = [x, y].filter(z => live(z) && z.posAt).sort((p, q) => q.posAt - p.posAt)[0];
-      if (withPos) { e.pos = withPos.pos; e.posAt = withPos.posAt; }
+      const wp = [x, y].filter(z => live(z) && z.posAt).sort((p, q) => q.posAt - p.posAt)[0];
+      if (wp && !e.done) { e.pos = wp.pos; e.posAt = wp.posAt; }
       out.items[k] = e;
     }
-    for (const w of keys(a.days, b.days)) {
+    for (const f of ['days', 'inf']) for (const w of keys(a[f], b[f])) {
       const dd = {};
-      for (const d of keys(a.days?.[w], b.days?.[w])) { const e = later(a.days?.[w]?.[d], b.days?.[w]?.[d]); if (e) dd[d] = { ...e }; }
-      if (Object.keys(dd).length) out.days[w] = dd;
+      for (const d of keys(a[f][w], b[f][w])) { const e = pick(a[f][w]?.[d], b[f][w]?.[d]); if (e) dd[d] = { ...e }; }
+      if (Object.keys(dd).length) out[f][w] = dd;
     }
-    for (const w of keys(a.weekStart, b.weekStart)) {
-      const vals = [a.weekStart?.[w], b.weekStart?.[w]].filter(t => t && t >= R);
-      if (vals.length) out.weekStart[w] = Math.min(...vals);
-    }
-    const pa = (a.pendingAt || 0) >= R ? a : null, pb = (b.pendingAt || 0) >= R ? b : null;
-    const pw = !pa ? pb : !pb ? pa : ((pb.pendingAt || 0) > (pa.pendingAt || 0) ? pb : pa);
+    for (const k of keys(a.free, b.free)) { const e = pick(a.free[k], b.free[k]); if (e) out.free[k] = { ...e }; }
+    for (const w of keys(a.weekStart, b.weekStart)) { const v = [a.weekStart[w], b.weekStart[w]].filter(t => t && t >= R); if (v.length) out.weekStart[w] = Math.min(...v); }
+    const pw = [a, b].filter(s => (s.pendingAt || 0) >= R).sort((p, q) => (q.pendingAt || 0) - (p.pendingAt || 0))[0];
     if (pw) { out.pending = pw.pending; out.pendingAt = pw.pendingAt; }
-    out.last = later(a.last, b.last);
+    out.last = pick(a.last, b.last);
     return out;
   }
-  function migrateV1(o) {
-    const s = blank();
-    Object.keys(o.done || {}).forEach(k => { if (o.done[k]) s.items[k] = { done: true, at: 1 }; });
-    Object.entries(o.days || {}).forEach(([w, arr]) => (arr || []).forEach((v, d) => { if (v) { (s.days[w] = s.days[w] || {})[d] = { done: true, at: 1 }; } }));
-    return s;
-  }
 
-  // ---------------------------------------------------------------- persistence
-  // cloud: the viewer's private record in this artifact's store (follows them across devices on claude.ai)
-  // local: this browser's storage (GitHub Pages / app); memory: nothing persists
-  const LKEY = 'palouse-companion-v2';
-  let mode = 'memory', ref = null, writing = false, again = false, timer = null, dueAt = 0, lastRemote = '';
+  // ================================================================ persistence
+  // cloud: the viewer's private record in the artifact store (claude.ai); local: this browser; memory: nothing kept.
+  const LKEY = 'palouse-companion-v3';
+  let mode = 'memory', ref = null, writing = false, again = false, timer = null, dueAt = 0, lastRemote = '', syncNote = '';
   function loadLocal() {
-    try {
-      const raw = localStorage.getItem(LKEY);
-      if (raw) return JSON.parse(raw);
-      const old = localStorage.getItem('palouse-companion-v1');
-      if (old) return migrateV1(JSON.parse(old));
-    } catch (e) {}
+    for (const k of [LKEY, 'palouse-companion-v2', 'palouse-companion-v1']) {
+      try { const raw = localStorage.getItem(k); if (raw) return JSON.parse(raw); } catch (e) {}
+    }
     return null;
   }
-  function saveLocal() {
-    try { localStorage.setItem(LKEY, stable(S)); if (mode === 'memory') { mode = 'local'; } return true; } catch (e) { return false; }
-  }
+  function saveLocal() { try { localStorage.setItem(LKEY, stable(S)); if (mode === 'memory') mode = 'local'; return true; } catch (e) { return false; } }
   function schedule(delay = 800) {
     if (!ref) return;
     const due = now() + delay;
     if (timer && dueAt <= due) return;
-    clearTimeout(timer); dueAt = due;
-    timer = setTimeout(flush, delay);
+    clearTimeout(timer); dueAt = due; timer = setTimeout(flush, delay);
   }
   async function flush() {
     timer = null;
     if (!ref) return;
     if (writing) { again = true; return; }
     writing = true;
-    const snapshot = stable(S);
-    try {
-      await ref.set({ state: JSON.parse(snapshot), savedAt: now() });
-      lastRemote = snapshot;
-    } catch (e) {
-      if (e && e.code === 'unavailable') { setTimeout(() => schedule(0), 1500 + Math.random() * 2000); }
-      else { ref = null; mode = saveLocal() ? 'local' : 'memory'; syncNote = 'Your account copy could not be updated, so progress is saved in this browser.'; showSync(); }
+    const snap = stable(S);
+    try { await ref.set({ state: JSON.parse(snap), savedAt: now() }); lastRemote = snap; }
+    catch (e) {
+      if (e && e.code === 'unavailable') setTimeout(() => schedule(0), 1500 + Math.random() * 2000);
+      else { ref = null; mode = saveLocal() ? 'local' : 'memory'; syncNote = 'Your account copy could not be updated, so progress is saved on this device.'; }
     }
     writing = false;
     if (again) { again = false; schedule(); }
   }
   function applyRemote(st) {
-    const rj = stable(st);
-    if (rj === lastRemote) return;
-    lastRemote = rj;
-    const merged = merge(S, st);
-    const mj = stable(merged);
-    const changed = mj !== stable(S);
-    S = merged; saveLocal();
-    if (changed) refresh(true);
+    const rj = stable(st); if (rj === lastRemote) return; lastRemote = rj;
+    const m = merge(S, st), mj = stable(m), changed = mj !== stable(S);
+    S = m; saveLocal();
+    if (changed) render();
     if (mj !== rj) schedule();
   }
-  let syncNote = '';
   async function initCloud() {
     if (!window.claude || typeof window.claude.use !== 'function') return;
     try {
       const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
       if (!db || !user) return;
-      const uid = await user.id();
-      if (!uid) return;
+      const uid = await user.id(); if (!uid) return;
       const r = db.doc(`data/users/${uid}/progress`);
       const snap = await r.get();
       ref = r; mode = 'cloud';
       if (snap.exists && snap.data() && snap.data().state) applyRemote(snap.data().state);
-      else if (hasAnyProgress()) schedule(0);
-      showSync();
-      r.onSnapshot(sn => {
-        if (sn.metadata && sn.metadata.hasPendingWrites) return;
-        if (sn.exists && sn.data() && sn.data().state) applyRemote(sn.data().state);
-      }, () => {});
+      else if (Object.keys(S.items).length || Object.keys(S.days).length) schedule(0);
+      r.onSnapshot(sn => { if (sn.metadata && sn.metadata.hasPendingWrites) return; if (sn.exists && sn.data() && sn.data().state) applyRemote(sn.data().state); }, () => {});
+      if (tab === 'you') render();
       checkPending();
-    } catch (e) { /* stay on local */ }
+    } catch (e) {}
   }
-  function showSync() {
-    const el = document.getElementById('sync'), t = document.getElementById('syncText');
-    el.dataset.mode = mode;
-    t.textContent = syncNote || ({
-      cloud: 'Progress saved to your account · pick up on any device',
-      local: 'Progress saved in this browser · move it with a progress code',
-      memory: 'Progress is not being saved here · copy a progress code before you leave'
-    })[mode];
-  }
-  function hasAnyProgress() { return Object.keys(S.items).length || Object.keys(S.days).length; }
-  function commit({ render = true, delay } = {}) {
-    saveLocal(); schedule(delay); showSync();
-    if (render) refresh();
-  }
+  const syncText = () => syncNote || ({ cloud: 'Saved to your account. Pick up on any device.', local: 'Saved on this device. Use a progress code to move it.', memory: 'Not being saved here. Copy a progress code before you leave.' })[mode];
+  function commit(opts = {}) { saveLocal(); schedule(opts.delay); if (opts.render !== false) render(); }
 
-  // ---------------------------------------------------------------- progress model
+  // ================================================================ dates + progress model
+  const ymd = t => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+  const today = () => ymd(now());
+  const addDays = (s, n) => { const d = new Date(s + 'T12:00'); d.setDate(d.getDate() + n); return ymd(d); };
+  const niceDate = s => new Date(s + 'T12:00').toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  const shortDate = s => new Date(s + 'T12:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
   const ent = k => S.items[k] || {};
   const isDone = k => !!ent(k).done;
+  const doneToday = k => isDone(k) && ymd(ent(k).at) === today();
   const posOf = k => ent(k).pos || 0;
-  const today = () => new Date().toLocaleDateString('en-CA');
-  function touchWeek(w) { if (!S.weekStart[w]) S.weekStart[w] = now(); }
-  function setDone(k, v) {
+  const touchWeek = n => { if (n >= 1 && !S.weekStart[n]) S.weekStart[n] = now(); };
+  const verb = it => it.kind === 'video' ? 'Watched' : it.kind === 'read' ? 'Read' : 'Did';
+  function setDone(k, v = true) {
     const it = ITEMS[k];
-    S.items[k] = { ...ent(k), done: v, at: now() };
-    if (v) { delete S.items[k].pos; delete S.items[k].posAt; S.last = { week: it.week, label: (it.kind === 'video' ? 'Watched ' : it.kind === 'read' ? 'Read ' : 'Did ') + `“${it.title}”`, at: now() }; }
+    S.items[k] = { done: v, at: now() };
+    if (v) S.last = { week: it.week, label: `${verb(it)} “${it.title}”`, at: now() };
     touchWeek(it.week);
   }
   function setPos(k, sec) {
@@ -660,76 +1693,689 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; display: grid; ga
     S.last = { week: it.week, label: `Watching “${it.title}”`, at: now() };
     touchWeek(it.week);
   }
-  const dayEnt = (w, d) => (S.days[w] || {})[d] || {};
-  const daysDone = w => Array.from({ length: DAYS }, (_, d) => dayEnt(w, d)).filter(e => e.done).length;
-  const loggedToday = w => Array.from({ length: DAYS }, (_, d) => dayEnt(w, d)).some(e => e.done && e.date === today());
-  function setDay(w, d, v) {
-    S.days[w] = { ...(S.days[w] || {}), [d]: { done: v, at: now(), date: v ? today() : null } };
-    if (v) S.last = { week: w, label: `Logged practice, Week ${w} day ${d + 1}`, at: now() };
-    touchWeek(w);
+  const dayEnt = (n, d) => (S.days[n] || {})[d] || {};
+  const infEnt = (n, d) => (S.inf[n] || {})[d] || {};
+  const daysDone = n => Array.from({ length: DAYS }, (_, d) => dayEnt(n, d)).filter(e => e.done).length;
+  function logDay(n, d, rec) {
+    S.days[n] = { ...(S.days[n] || {}), [d]: { done: true, at: now(), date: today(), ...rec } };
+    S.last = { week: n, label: `Practised ${rec.pid ? P[rec.pid].t : ''} (Week ${n}, day ${d + 1})`, at: now() };
+    touchWeek(n);
   }
-  function required(w) { return ORDER[w].filter(x => !x.optional); }
-  function weekProgress(w) {
-    const req = required(w.n);
-    const done = req.filter(x => isDone(x.key)).length + (hasLog(w) ? daysDone(w.n) : 0);
-    const total = req.length + (hasLog(w) ? DAYS : 0);
+  function unlogDay(n, d) { S.days[n] = { ...(S.days[n] || {}), [d]: { done: false, at: now() } }; }
+  function logInf(n, d, note) { S.inf[n] = { ...(S.inf[n] || {}), [d]: { done: true, at: now(), date: today(), note } }; touchWeek(n); }
+  function logFree(pid, mins, rec) {
+    const k = today(), e = S.free[k] || { mins: 0, list: [] };
+    S.free[k] = { at: now(), mins: (e.mins || 0) + mins, list: [...(e.list || []), { pid, mins, ...rec }].slice(-12) };
+  }
+
+  function weekProgress(n) {
+    const req = required(n);
+    const done = req.filter(x => isDone(x.key)).length + (hasLog(n) ? daysDone(n) : 0);
+    const total = req.length + (hasLog(n) ? DAYS : 0);
     return total ? done / total : 0;
   }
-  function minutesLeft(w) {
-    let m = required(w.n).filter(x => !isDone(x.key)).reduce((a, x) => a + (x.min || 0) - (x.kind === 'video' ? Math.floor(posOf(x.key) / 60) : 0), 0);
-    if (hasLog(w)) m += (DAYS - daysDone(w.n)) * PRACTICE_MIN;
-    return Math.max(0, m);
-  }
-  // "Where you left off": the week you were last active in, or the next one once it's complete.
+  const weekComplete = n => weekProgress(n) >= 1;
   function activeWeek() {
-    const lastW = S.last ? S.last.week : null;
-    if (lastW == null) { const f = W.find(w => weekProgress(w) < 1); return f ? f.n : 8; }
-    if (weekProgress(W[lastW]) >= 1) { const nx = W.find(w => w.n > lastW && weekProgress(w) < 1); return nx ? nx.n : lastW; }
-    return lastW;
+    const lw = S.last ? S.last.week : null;
+    if (lw == null) { const f = W.find(w => !weekComplete(w.n)); return f ? f.n : 8; }
+    if (weekComplete(lw)) { const nx = W.find(w => w.n > lw && !weekComplete(w.n)); return nx ? nx.n : lw; }
+    return lw;
   }
-  const nextItem = w => required(w).find(x => !isDone(x.key));
-  function behind(w) {
-    const out = [];
-    W.filter(x => x.n < w).forEach(x => {
-      const items = required(x.n).filter(i => !isDone(i.key));
-      const days = hasLog(x) ? DAYS - daysDone(x.n) : 0;
-      if (items.length || days) out.push({ w: x.n, items, days });
-    });
+  const opensOn = n => (n >= 2 && S.weekStart[n - 1]) ? addDays(ymd(S.weekStart[n - 1]), 7) : null;
+
+  function practiceDates() {
+    const set = new Set();
+    Object.values(S.days).forEach(m => Object.values(m).forEach(e => { if (e.done && e.date) set.add(e.date); }));
+    Object.keys(S.free).forEach(k => { if ((S.free[k].mins || 0) > 0) set.add(k); });
+    return set;
+  }
+  function streak() {
+    const s = practiceDates(); let d = today(), n = 0;
+    if (!s.has(d)) d = addDays(d, -1);
+    while (s.has(d)) { n++; d = addDays(d, -1); }
+    return n;
+  }
+  function bestStreak() {
+    const ds = [...practiceDates()].sort(); let best = 0, run = 0, prev = null;
+    ds.forEach(d => { run = prev && addDays(prev, 1) === d ? run + 1 : 1; best = Math.max(best, run); prev = d; });
+    return best;
+  }
+  function totalMinutes() {
+    let m = 0;
+    Object.values(S.days).forEach(x => Object.values(x).forEach(e => { if (e.done) m += e.mins || 30; }));
+    Object.values(S.free).forEach(e => { m += e.mins || 0; });
+    return m;
+  }
+
+  // ================================================================ sessions
+  // A session is an ordered list of steps; "done" is always read from saved progress.
+  const L = k => ({ type: ITEMS[k].kind, key: k });
+  function daySession(n, d, rollover) {
+    const p = plan(n);
+    let keys = p[d].slice();
+    if (rollover) keys = p.slice(0, d + 1).flat().filter(k => !isDone(k) || doneToday(k) || p[d].includes(k));
+    const steps = keys.filter(k => !ITEMS[k].optional || p[d].includes(k)).map(L);
+    steps.push({ type: 'practice', n, d });
+    if (W[n].prompt) steps.push({ type: 'informal', n, d });
+    return { kind: 'day', n, d, title: `Week ${n} · Day ${d + 1}`, steps };
+  }
+  function stepDone(s) {
+    if (s.type === 'practice') return s.free ? !!s.logged : !!dayEnt(s.n, s.d).done;
+    if (s.type === 'informal') return !!infEnt(s.n, s.d).done;
+    return isDone(s.key);
+  }
+  const stepMin = s => s.type === 'practice' ? (s.free ? P[s.pid].min : 30) : s.type === 'informal' ? 5 : (ITEMS[s.key].min || 5) - (s.type === 'video' ? Math.floor(posOf(s.key) / 60) : 0);
+  const left = sess => sess.steps.filter(s => !stepDone(s)).reduce((a, s) => a + Math.max(1, stepMin(s)), 0);
+  const stepTitle = s => s.type === 'practice' ? (s.free ? P[s.pid].t : practiceLabel(s.n, s.d)) : s.type === 'informal' ? 'Informal practice log' : ITEMS[s.key].title;
+  const stepKind = s => ({ video: 'Video', read: 'Reading', task: 'To do', finish: 'Finish', practice: 'Formal practice', informal: 'Through the day' })[s.type];
+
+  // What Today should show.
+  function todayPlan() {
+    const aw = activeWeek();
+    if (aw === 0) {
+      const steps = ORDER[0].map(x => L(x.key));
+      if (steps.filter(s => !ITEMS[s.key].optional).every(stepDone)) return { kind: 'intro', n: 1 };
+      return { kind: 'day', n: 0, d: 0, title: 'Getting started', steps };
+    }
+    if (!S.weekStart[aw]) {
+      const o = opensOn(aw);
+      if (o && today() < o) return { kind: 'rest', n: aw, opens: o };
+      return { kind: 'intro', n: aw };
+    }
+    let d = -1;
+    for (let i = 0; i < DAYS; i++) if (dayEnt(aw, i).done && dayEnt(aw, i).date === today()) d = i;
+    if (d < 0) d = Array.from({ length: DAYS }, (_, i) => i).find(i => !dayEnt(aw, i).done) ?? -1;
+    if (d < 0) {
+      const leftover = plan(aw).flat().filter(k => !isDone(k) && !ITEMS[k].optional);
+      if (leftover.length) return { kind: 'day', n: aw, d: DAYS - 1, title: `Week ${aw} · Catch up`, steps: leftover.map(L) };
+      const o = aw < 8 ? addDays(ymd(S.weekStart[aw]), 7) : null;
+      return { kind: aw === 8 ? 'complete' : 'rest', n: aw + 1, opens: o };
+    }
+    return daySession(aw, d, true);
+  }
+  function behind() {
+    const aw = activeWeek(), out = [];
+    W.filter(w => w.n < aw).forEach(w => { const items = required(w.n).filter(i => !isDone(i.key)); if (items.length) out.push(...items); });
     return out;
   }
 
-  // ---------------------------------------------------------------- formatting
+  // ================================================================ formatting + DOM
   const hm = m => m < 60 ? `${m} min` : `${Math.floor(m / 60)} h${m % 60 ? ' ' + (m % 60) + ' min' : ''}`;
-  const mmss = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
-  function ago(t) {
-    const m = Math.round((now() - t) / 60000);
-    if (m < 1) return 'just now';
-    if (m < 60) return `${m} min ago`;
-    const h = Math.round(m / 60);
-    if (h < 24) return `${h} h ago`;
-    const d = Math.round(h / 24);
-    return d === 1 ? 'yesterday' : `${d} days ago`;
-  }
-  const shortDate = t => new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-  const weekName = n => n === 0 ? 'Getting Started' : `Week ${n}`;
-
-  // ---------------------------------------------------------------- DOM helpers
-  const NS = 'http://www.w3.org/2000/svg';
+  const mmss = s => { s = Math.max(0, Math.floor(s)); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
+  function ago(t) { const m = Math.round((now() - t) / 60000); if (m < 1) return 'just now'; if (m < 60) return `${m} min ago`; const h = Math.round(m / 60); if (h < 24) return `${h} h ago`; const d = Math.round(h / 24); return d === 1 ? 'yesterday' : `${d} days ago`; }
   const el = (tag, attrs = {}, ...kids) => {
     const n = document.createElement(tag);
     for (const [k, v] of Object.entries(attrs)) {
       if (v == null || v === false) continue;
-      if (k === 'class') n.className = v;
-      else if (k.startsWith('on')) n[k] = v;
-      else n.setAttribute(k, v);
+      if (k === 'class') n.className = v; else if (k.startsWith('on')) n[k] = v; else n.setAttribute(k, v === true ? '' : v);
     }
     kids.flat().forEach(k => k != null && k !== false && n.append(k));
     return n;
   };
-  const ext = (text, href, onopen, cls) => el('a', { href, target: '_blank', rel: 'noopener', class: cls, onclick: onopen ? () => { onopen(); } : null }, text);
-  const tick = () => { const s = document.createElementNS(NS, 'svg'); s.setAttribute('viewBox', '0 0 16 16'); s.innerHTML = '<path d="M3 8.5l3.2 3L13 4.5"/>'; return s; };
+  const ext = (text, href, onopen, cls) => el('a', { href, target: '_blank', rel: 'noopener', class: cls, onclick: onopen ? () => onopen() : null }, text);
+  const ytWatch = (id, pos) => `https://www.youtube.com/watch?v=${id}${pos > 5 ? '&t=' + Math.floor(pos) + 's' : ''}`;
+  const iconFor = s => s.type === 'practice' ? 'practice' : s.type;
 
-  // Opening something outside the page: remember it, then ask about it when the person comes back.
+  // ================================================================ tabs + routing
+  const TABS = [['today', 'Today', 'today'], ['path', 'Path', 'path'], ['practices', 'Practices', 'lib'], ['you', 'You', 'you']];
+  let tab = (location.hash || '').replace('#', '');
+  if (!TABS.some(t => t[0] === tab)) tab = 'today';
+  let pathWeek = null;
+  function go(t) { tab = t; pathWeek = null; try { history.replaceState(null, '', '#' + t); } catch (e) {} render(); window.scrollTo(0, 0); }
+  window.addEventListener('hashchange', () => { const t = location.hash.replace('#', ''); if (TABS.some(x => x[0] === t) && t !== tab) { tab = t; pathWeek = null; render(); } });
+
+  function renderTabs() {
+    const nav = document.getElementById('tabs'); nav.innerHTML = '';
+    TABS.forEach(([id, label, ic]) => nav.append(el('a', { href: '#' + id, 'aria-current': tab === id ? 'page' : null, onclick: e => { e.preventDefault(); go(id); } }, icon(ic), label)));
+  }
+
+  function render() {
+    renderTabs();
+    const app = document.getElementById('app'); app.innerHTML = '';
+    app.append(({ today: viewToday, path: viewPath, practices: viewPractices, you: viewYou })[tab]());
+    if (session) updateSessionChrome();
+  }
+
+  // ================================================================ Today
+  function stepper(sess) {
+    const box = el('div', { class: 'stepper', role: 'img', 'aria-label': `${sess.steps.filter(stepDone).length} of ${sess.steps.length} steps done` });
+    const cur = sess.steps.findIndex(s => !stepDone(s));
+    sess.steps.forEach((s, i) => {
+      if (i) box.append(el('span', { class: 'bar' + (stepDone(sess.steps[i - 1]) ? ' done' : '') }));
+      box.append(el('span', { class: 'dot' + (stepDone(s) ? ' done' : i === cur ? ' cur' : ''), title: stepTitle(s) }, icon(stepDone(s) ? 'check' : iconFor(s))));
+    });
+    return box;
+  }
+  function stepRow(sess, i) {
+    const s = sess.steps[i], done = stepDone(s);
+    const sub = s.type === 'practice' ? (s.free ? `${P[s.pid].min} min` : (dayEnt(s.n, s.d).done ? `Logged · ${dayEnt(s.n, s.d).mins || 30} min` : 'About 30 min, guided')) :
+      s.type === 'informal' ? (infEnt(s.n, s.d).done ? 'Logged' : 'Notice it during the day, log it tonight') :
+      [stepKind(s), ITEMS[s.key].by].filter(Boolean).join(' · ');
+    const pos = s.type === 'video' && !done && posOf(s.key) ? `Stopped at ${mmss(posOf(s.key))}` : '';
+    return el('button', { class: 'step' + (done ? ' done' : ''), onclick: () => openSession(sess, i) },
+      el('span', { class: 'ic' }, icon(done ? 'check' : iconFor(s))),
+      el('div', {}, el('span', { class: 't' }, stepTitle(s)), el('span', { class: 's' }, pos ? el('span', { class: 'pos' }, pos) : sub)),
+      el('span', { class: 'm' }, s.type === 'practice' || s.type === 'informal' ? '' : `${ITEMS[s.key].approx ? '~' : ''}${ITEMS[s.key].min || ''}${ITEMS[s.key].min ? ' min' : ''}`));
+  }
+  function topbar(title) {
+    const st = streak();
+    return el('div', { class: 'topbar' }, el('span', { class: 'brand' }, title),
+      el('span', { class: 'pill' + (st ? ' hot' : ''), title: 'Days in a row with a practice' }, icon('leaf'), `${st} day${st === 1 ? '' : 's'}`));
+  }
+  function weekStrip(n) {
+    if (!hasLog(n) || !S.weekStart[n]) return null;
+    const start = ymd(S.weekStart[n]);
+    const box = el('div', { class: 'week', 'aria-label': `Week ${n} practice days` });
+    for (let d = 0; d < DAYS; d++) {
+      const e = dayEnt(n, d);
+      const isNext = !e.done && Array.from({ length: d }, (_, i) => dayEnt(n, i).done).every(Boolean);
+      box.append(el('div', { class: 'wd' + (e.done ? ' done' : '') + (isNext ? ' today' : ''), title: practiceLabel(n, d) }, el('i', {}, e.done ? icon('check') : String(d + 1)), e.done && e.date ? shortDate(e.date) : `Day ${d + 1}`));
+    }
+    box.append(el('div', { class: 'wd rest', title: 'The course asks for at least seven days per week' }, el('i', {}, '7'), 'Rest'));
+    return el('section', { class: 'card' },
+      el('div', { class: 'spread' }, el('h3', {}, `This week`), el('span', { class: 'small muted mono' }, `${daysDone(n)} of ${DAYS} days`)),
+      box,
+      el('p', { class: 'small muted' }, `Started ${niceDate(start)}.` + (n < 8 ? ` Week ${n + 1} opens ${niceDate(addDays(start, 7))} at the earliest.` : '')));
+  }
+  function viewToday() {
+    const tp = todayPlan();
+    const scr = el('div', { class: 'screen' }, topbar('Palouse Companion'));
+    if (S.last && now() - S.last.at > 4 * DAY) scr.append(el('p', { class: 'note' }, `Welcome back. It's been ${Math.floor((now() - S.last.at) / DAY)} days, which is common. Carry on from here; there's no need to restart.`));
+
+    if (tp.kind === 'intro') {
+      const w = W[tp.n];
+      const vMin = (w.videos || []).reduce((a, v) => a + v.min, 0), rMin = (w.readings || []).reduce((a, r) => a + readMin(r), 0);
+      scr.append(el('section', { class: 'card hero' },
+        el('span', { class: 'eyebrow' }, `Week ${w.n} of 8 · ${w.subtitle}`),
+        el('h1', {}, w.title), el('p', {}, w.summary),
+        el('div', { class: 'budget' },
+          el('div', {}, el('small', {}, 'Each day'), el('b', {}, `~${Math.round((vMin + rMin) / DAYS + 35)} min`), el('small', {}, 'learning + practice')),
+          el('div', {}, el('small', {}, 'Practice'), el('b', {}, '6 days'), el('small', {}, practiceLabel(w.n, 0))),
+          el('div', {}, el('small', {}, 'Videos + reading'), el('b', {}, hm(vMin + rMin)), el('small', {}, 'spread over the week'))),
+        w.note ? el('p', { class: 'note' }, w.note) : null,
+        el('button', { class: 'btn primary big', onclick: () => { touchWeek(w.n); S.last = { week: w.n, label: `Began Week ${w.n}`, at: now() }; commit(); openSession(todayPlan()); } }, `Begin Week ${w.n}`)));
+    } else if (tp.kind === 'rest') {
+      scr.append(el('section', { class: 'card hero' },
+        el('span', { class: 'eyebrow' }, `Week ${tp.n - 1} complete`),
+        el('h1', {}, 'Nicely done.'),
+        el('p', {}, `Week ${tp.n} opens ${niceDate(tp.opens)}. The course asks for at least seven days per week so each one has time to settle.`),
+        el('p', { class: 'muted small' }, 'Until then, keep your daily practice going.'),
+        el('button', { class: 'btn primary big', onclick: () => go('practices') }, 'Choose a practice')));
+    } else if (tp.kind === 'complete') {
+      scr.append(el('section', { class: 'card hero' },
+        el('span', { class: 'eyebrow' }, 'Course complete'),
+        el('h1', {}, 'Eight weeks. Well done.'),
+        el('p', {}, 'Keep the practices that work for you. Practices has every guided meditation and a silent timer.'),
+        el('div', { class: 'row' }, ext('Request your certificate', abs('/MBSR/certificate.html'), null, 'btn primary'), el('button', { class: 'btn', onclick: () => go('practices') }, 'Practices'))));
+    } else {
+      const sess = tp, done = sess.steps.filter(stepDone).length, all = done === sess.steps.length;
+      const nx = sess.steps.findIndex(s => !stepDone(s));
+      const hero = el('section', { class: 'card hero' },
+        el('div', { class: 'spread' }, el('span', { class: 'eyebrow' }, sess.title), el('span', { class: 'small mono muted' }, all ? 'All done' : `${hm(left(sess))} left`)),
+        el('h1', {}, sess.n === 0 ? 'Set up for the course' : W[sess.n].title),
+        stepper(sess),
+        el('p', { class: 'small muted' }, all ? 'Today is complete.' : `${done} of ${sess.steps.length} done · next: ${stepTitle(sess.steps[nx])}`));
+      if (!all) hero.append(el('button', { class: 'btn primary big', onclick: () => openSession(sess) }, done ? 'Continue' : 'Start today'));
+      else {
+        const nd = sess.n && sess.d < DAYS - 1 ? sess.d + 1 : null;
+        hero.append(el('p', {}, nd != null ? `Back tomorrow for Day ${nd + 1}: ${practiceLabel(sess.n, nd)}.` : `That's the last practice day of Week ${sess.n}.`));
+        if (nd != null) {
+          const ahead = plan(sess.n)[nd].filter(k => !isDone(k));
+          if (ahead.length) hero.append(el('button', { class: 'btn', onclick: () => openSession({ kind: 'ahead', n: sess.n, d: nd, title: `Get ahead · Day ${nd + 1}`, steps: ahead.map(L) }) }, `Get ahead: watch and read Day ${nd + 1}'s ${ahead.length} item${ahead.length > 1 ? 's' : ''}`));
+        }
+      }
+      hero.append(el('div', { class: 'steps' }, sess.steps.map((_, i) => stepRow(sess, i))));
+      scr.append(hero);
+      if (sess.n) scr.append(weekStrip(sess.n));
+    }
+    const bh = behind();
+    if (bh.length) scr.append(el('section', { class: 'card' },
+      el('div', { class: 'spread' }, el('h3', {}, 'Still open from earlier weeks'), el('span', { class: 'small mono muted' }, `${bh.length} item${bh.length > 1 ? 's' : ''}`)),
+      el('button', { class: 'btn', onclick: () => openSession({ kind: 'catchup', title: 'Catch up', steps: bh.map(x => L(x.key)) }) }, 'Catch up now')));
+    if (S.last) scr.append(el('p', { class: 'small muted' }, `Last activity: ${S.last.label}, ${ago(S.last.at)}.`));
+    return scr;
+  }
+
+  // ================================================================ Path
+  function drawTrail() {
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 720 120'); svg.setAttribute('role', 'list'); svg.setAttribute('aria-label', 'Course path');
+    const aw = activeWeek();
+    const xs = W.map((_, i) => 40 + i * (640 / (W.length - 1))), ys = W.map((_, i) => 62 - Math.sin(i * 0.9) * 16 - i * 2);
+    let d = `M0 ${ys[0] + 6}`;
+    xs.forEach((x, i) => { const px = i ? xs[i - 1] : 0, py = i ? ys[i - 1] : ys[0] + 6, cx = (px + x) / 2; d += ` C${cx} ${py} ${cx} ${ys[i]} ${x} ${ys[i]}`; });
+    const ly = ys[ys.length - 1]; d += ` C700 ${ly} 700 ${ly - 4} 720 ${ly - 6}`;
+    const mk = (t, a) => { const n = document.createElementNS(NS, t); Object.entries(a).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+    svg.append(mk('path', { d: d + ' L720 120 L0 120 Z', fill: 'var(--accent-soft)' }), mk('path', { d, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-dasharray': '3 5' }));
+    W.forEach((w, i) => {
+      const p = weekProgress(w.n), r = w.n === aw ? 13 : 10;
+      const g = mk('g', { class: 'stop', role: 'listitem', tabindex: 0, 'aria-label': `${w.n ? 'Week ' + w.n : 'Getting started'}: ${w.title}, ${Math.round(p * 100)}% done` });
+      if (w.n === aw) g.append(mk('circle', { cx: xs[i], cy: ys[i], r: r + 5, fill: 'none', stroke: 'var(--accent)', 'stroke-dasharray': '2 3' }));
+      g.append(mk('circle', { cx: xs[i], cy: ys[i], r, fill: p >= 1 ? 'var(--sage)' : 'var(--surface)', stroke: p > 0 ? 'var(--sage)' : 'var(--line)', 'stroke-width': 1.5 }));
+      if (p > 0 && p < 1) { const c = 2 * Math.PI * r; g.append(mk('circle', { cx: xs[i], cy: ys[i], r, fill: 'none', stroke: 'var(--sage)', 'stroke-width': 3, 'stroke-dasharray': `${c * p} ${c}`, transform: `rotate(-90 ${xs[i]} ${ys[i]})` })); }
+      const t = mk('text', { x: xs[i], y: ys[i] + 4, 'text-anchor': 'middle' }); t.style.fill = p >= 1 ? 'var(--surface)' : 'var(--ink)'; t.textContent = w.n || '·'; g.append(t);
+      const lab = mk('text', { x: xs[i], y: ys[i] + 32, 'text-anchor': 'middle' }); lab.textContent = w.short; g.append(lab);
+      const open = () => { pathWeek = w.n; render(); window.scrollTo(0, 0); };
+      g.addEventListener('click', open); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+      svg.append(g);
+    });
+    return el('div', { class: 'trail' }, svg);
+  }
+  function viewPath() {
+    if (pathWeek != null) return viewWeek(W[pathWeek]);
+    const aw = activeWeek();
+    const all = W.reduce((a, w) => a + weekProgress(w.n), 0) / W.length;
+    const scr = el('div', { class: 'screen' }, topbar('Your path'), drawTrail(),
+      el('div', { class: 'stack' }, el('div', { class: 'spread' }, el('span', { class: 'small muted' }, 'Whole course'), el('span', { class: 'small mono' }, `${Math.round(all * 100)}%`)), el('div', { class: 'meter' }, el('span', { style: `width:${(all * 100).toFixed(0)}%` }))));
+    const list = el('div', { class: 'stack' });
+    W.forEach(w => {
+      const p = weekProgress(w.n);
+      list.append(el('button', { class: 'wk' + (p >= 1 ? ' done' : '') + (w.n === aw ? ' cur' : ''), onclick: () => { pathWeek = w.n; render(); window.scrollTo(0, 0); } },
+        el('span', { class: 'n' }, p >= 1 ? icon('check') : (w.n || '·')),
+        el('div', {}, el('strong', {}, w.title), el('div', { class: 'small muted' }, w.subtitle)),
+        el('span', { class: 'small mono muted' }, w.n === aw ? 'Now' : `${Math.round(p * 100)}%`)));
+    });
+    scr.append(list);
+    return scr;
+  }
+  function viewWeek(w) {
+    const scr = el('div', { class: 'screen' },
+      el('div', { class: 'topbar' }, el('button', { class: 'btn ghost', onclick: () => { pathWeek = null; render(); } }, icon('back'), 'Path'), null),
+      el('div', { class: 'stack' }, el('span', { class: 'eyebrow' }, w.n ? `Week ${w.n} of 8 · ${w.subtitle}` : 'Before Week 1'), el('h1', {}, w.title), el('p', {}, w.summary)));
+    if (w.note) scr.append(el('p', { class: 'note' }, w.note));
+    if (w.n === 0) {
+      const sess = { kind: 'day', n: 0, d: 0, title: 'Getting started', steps: ORDER[0].map(x => L(x.key)) };
+      scr.append(el('section', { class: 'card' }, el('div', { class: 'steps' }, sess.steps.map((_, i) => stepRow(sess, i)))));
+    } else {
+      for (let d = 0; d < DAYS; d++) {
+        const sess = daySession(w.n, d, false), e = dayEnt(w.n, d);
+        scr.append(el('section', { class: 'card' },
+          el('div', { class: 'spread' }, el('h3', {}, `Day ${d + 1}`), el('span', { class: 'small mono muted' }, e.done ? `Practised ${e.date ? shortDate(e.date) : ''}` : hm(left(sess)))),
+          el('div', { class: 'steps' }, sess.steps.map((_, i) => stepRow(sess, i))),
+          e.done ? el('button', { class: 'linkbtn', onclick: () => { unlogDay(w.n, d); commit(); } }, 'Undo practice log') : null));
+      }
+      const sheets = el('div', { class: 'row' });
+      if (w.sheets) sheets.append(ext('Formal practice sheet', abs(`/practice/${w.sheets}-formal.pdf`), null, 'btn'), ext('Informal practice sheet', abs(`/practice/${w.sheets}-informal.pdf`), null, 'btn'));
+      scr.append(el('section', { class: 'card' }, el('h3', {}, 'Daily practice'), el('p', {}, w.informal),
+        w.sheets ? el('p', { class: 'small muted' }, 'Your log in this app is a record for you. If you want a certificate, the course also asks for its practice sheets.') : null, sheets));
+      if (w.supplementary) scr.append(el('details', {}, el('summary', {}, `Optional extras (${w.supplementary.length})`),
+        el('ul', {}, w.supplementary.map(s => el('li', {}, ext(s.t, abs(s.url)), s.by ? ` · ${s.by}` : '', s.min ? ` · ${s.min} min` : '')))));
+    }
+    scr.append(el('div', { class: 'row' }, ext('Open the original course page', abs(w.page), null, 'btn')));
+    return scr;
+  }
+
+  // ================================================================ Practices
+  function viewPractices() {
+    const scr = el('div', { class: 'screen' }, topbar('Practices'),
+      el('p', { class: 'muted' }, 'Every guided practice from the course, any time. Practising here counts toward your streak.'));
+    const list = el('div', { class: 'plist' });
+    Object.entries(P).forEach(([id, p]) => list.append(el('button', { class: 'pr', onclick: () => openSession({ kind: 'free', title: p.t, steps: [{ type: 'practice', free: true, pid: id }] }) },
+      el('span', { class: 'ic' }, icon('play')), el('div', {}, el('strong', {}, p.t), p.prep ? el('div', { class: 'small muted' }, p.prep) : null), el('span', { class: 'small mono muted' }, `${p.min} min`))));
+    list.append(el('button', { class: 'pr', onclick: () => openSession({ kind: 'free', title: 'Silent timer', steps: [{ type: 'practice', free: true, pid: 'silent', timerOnly: true }] }) },
+      el('span', { class: 'ic' }, icon('timer')), el('div', {}, el('strong', {}, 'Silent timer'), el('div', { class: 'small muted' }, 'A bell to begin and end, nothing in between.')), el('span', { class: 'small mono muted' }, 'You choose')));
+    scr.append(list);
+    return scr;
+  }
+
+  // ================================================================ You
+  function journalEntries() {
+    const out = [];
+    Object.entries(S.days).forEach(([n, m]) => Object.entries(m).forEach(([d, e]) => { if (e.done) out.push({ at: e.at, date: e.date, head: `Week ${n} · Day ${+d + 1} · ${e.pid ? P[e.pid].t : 'Practice'}${e.mins ? ' · ' + e.mins + ' min' : ''}`, text: [(e.moods || []).join(', '), e.note].filter(Boolean).join(' — ') }); }));
+    Object.entries(S.inf).forEach(([n, m]) => Object.entries(m).forEach(([d, e]) => { if (e.done && e.note) out.push({ at: e.at, date: e.date, head: `Week ${n} · Day ${+d + 1} · Informal`, text: e.note }); }));
+    Object.entries(S.free).forEach(([k, e]) => (e.list || []).forEach(x => out.push({ at: e.at, date: k, head: `${P[x.pid] ? P[x.pid].t : 'Practice'} · ${x.mins} min`, text: [(x.moods || []).join(', '), x.note].filter(Boolean).join(' — ') })));
+    return out.sort((a, b) => b.at - a.at);
+  }
+  const encode = s => 'PC3.' + btoa(unescape(encodeURIComponent(stable(s))));
+  const decode = c => JSON.parse(decodeURIComponent(escape(atob(c.trim().replace(/^PC\d\./, '')))));
+  function copyText(text, msgEl, ta) {
+    const fallback = () => { if (ta) { ta.focus(); ta.select(); } msgEl.textContent = 'Selected. Copy it with your keyboard or a long-press.'; };
+    try { navigator.clipboard.writeText(text).then(() => { msgEl.textContent = 'Copied.'; }, fallback); } catch (e) { fallback(); }
+  }
+  function viewYou() {
+    const st = streak(), J = journalEntries();
+    const scr = el('div', { class: 'screen' }, topbar('You'),
+      el('div', { class: 'stats' },
+        el('div', { class: 'stat' }, el('small', {}, 'Current streak'), el('b', {}, String(st)), el('small', {}, st === 1 ? 'day' : 'days')),
+        el('div', { class: 'stat' }, el('small', {}, 'Best streak'), el('b', {}, String(bestStreak())), el('small', {}, 'days')),
+        el('div', { class: 'stat' }, el('small', {}, 'Days practised'), el('b', {}, String(practiceDates().size)), el('small', {}, 'in total')),
+        el('div', { class: 'stat' }, el('small', {}, 'Time practising'), el('b', {}, totalMinutes() < 60 ? `${totalMinutes()}m` : `${Math.floor(totalMinutes() / 60)}h ${totalMinutes() % 60}m`), el('small', {}, 'formal practice'))));
+    const jl = el('ul', { class: 'journal' }, J.slice(0, 20).map(j => el('li', {}, el('div', { class: 'small mono muted' }, `${j.date ? shortDate(j.date) : ''} · ${j.head}`), j.text ? el('div', {}, j.text) : null)));
+    const jmsg = el('span', { class: 'small', 'aria-live': 'polite' });
+    scr.append(el('section', { class: 'card' }, el('div', { class: 'spread' }, el('h3', {}, 'Practice journal'), J.length ? el('button', { class: 'linkbtn', onclick: () => copyText(J.slice().reverse().map(j => `${j.date || ''}  ${j.head}${j.text ? '\n    ' + j.text : ''}`).join('\n'), jmsg) }, 'Copy all') : null),
+      J.length ? jl : el('p', { class: 'muted' }, 'After each practice you can note how it went. Those notes collect here, and help when you fill in the course practice sheets.'), jmsg));
+
+    const out = el('textarea', { class: 'code', readonly: true, 'aria-label': 'Your progress code' }); out.value = encode(S);
+    const inp = el('textarea', { class: 'code', 'aria-label': 'Paste a progress code', placeholder: 'Paste a progress code here' });
+    const m1 = el('span', { class: 'small', 'aria-live': 'polite' }), m2 = el('span', { class: 'small', 'aria-live': 'polite' });
+    scr.append(el('section', { class: 'card' }, el('h3', {}, 'Your progress'), el('span', { class: 'sync', 'data-mode': mode }, el('i'), syncText()),
+      el('details', {}, el('summary', {}, 'Move progress to another device'),
+        el('div', { class: 'stack', style: 'margin-top:10px' }, el('p', { class: 'small' }, 'Copy this code on one device and paste it on the other. Progress from both is combined.'), out,
+          el('div', { class: 'row' }, el('button', { class: 'btn', onclick: () => copyText(out.value, m1, out) }, 'Copy code'), m1), inp,
+          el('div', { class: 'row' }, el('button', { class: 'btn', onclick: () => { try { const s = decode(inp.value); if (!s || !s.v) throw 0; S = merge(S, s); commit(); m2.textContent = 'Progress added.'; } catch (e) { m2.textContent = "That code didn't work. Copy the whole code, starting with PC."; } } }, 'Add this progress'), m2))),
+      resetControl()));
+    scr.append(el('footer', { class: 'about' },
+      el('p', {}, 'Palouse Companion is an unofficial, open-source app for the free ', ext('Palouse Mindfulness', 'https://palousemindfulness.com/'), ' MBSR course by Dave Potter. Every video, reading and guided practice belongs to its creators and to Palouse Mindfulness Inc., and is shown from their sites. ', ext('Support the course', abs('/about-us/contributions.html')), '.'),
+      el('p', {}, 'Difficult feelings can come up during this work. If they feel like too much, pause and talk to someone you trust or a counsellor. ', ext('Crisis lines by country', abs('/support/crisis-hotlines.html')), '.')));
+    return scr;
+  }
+  function resetControl() {
+    const wrap = el('div', { class: 'row small' });
+    const ask = el('button', { class: 'linkbtn', onclick: () => { wrap.innerHTML = ''; wrap.append('This clears every tick and journal note on every device. ', el('button', { class: 'linkbtn', onclick: () => { const r = now(); S = blank(); S.resetAt = r; S.pendingAt = r; commit(); } }, 'Yes, clear it'), ' · ', el('button', { class: 'linkbtn', onclick: () => render() }, 'Keep it')); } }, 'Reset all progress');
+    wrap.append(ask);
+    return wrap;
+  }
+
+  // ================================================================ session player
+  let session = null, sIdx = 0, media = null;
+  const $s = () => document.getElementById('session');
+  function openSession(sess, at) {
+    session = sess;
+    const first = sess.steps.findIndex(s => !stepDone(s));
+    sIdx = at != null ? at : (first < 0 ? 0 : first);
+    document.body.style.overflow = 'hidden';
+    $s().hidden = false;
+    buildSession();
+  }
+  function closeSession() {
+    stopMedia();
+    session = null; $s().hidden = true; $s().innerHTML = ''; document.body.style.overflow = '';
+    render();
+  }
+  function buildSession() {
+    const root = $s(); root.innerHTML = '';
+    root.append(
+      el('div', { class: 's-head' }, el('button', { class: 'icon-btn', 'aria-label': 'Close', onclick: closeSession }, icon('close')), el('div', { class: 'segs', id: 'segs' }), el('span', { class: 's-left', id: 'sleft' })),
+      el('div', { class: 's-body', id: 'sbody' }),
+      el('div', { class: 's-foot', id: 'sfoot' }));
+    renderStep();
+  }
+  function updateSessionChrome() {
+    if (!session) return;
+    const segs = document.getElementById('segs'); if (!segs) return;
+    segs.innerHTML = '';
+    session.steps.forEach((s, i) => segs.append(el('span', { class: stepDone(s) ? 'done' : i === sIdx ? 'cur' : '', title: stepTitle(s) })));
+    document.getElementById('sleft').textContent = session.steps.every(stepDone) ? 'Done' : `${hm(left(session))} left`;
+    renderFoot();
+  }
+  function nextIndex() {
+    const n = session.steps.length;
+    for (let k = 1; k <= n; k++) { const i = (sIdx + k) % n; if (!stepDone(session.steps[i])) return i; }
+    return -1;
+  }
+  function advance() {
+    stopMedia();
+    const i = nextIndex();
+    if (i < 0 || (session.steps.length === 1 && stepDone(session.steps[0]))) return celebrate();
+    sIdx = i; renderStep();
+    document.getElementById('sbody').scrollTop = 0;
+  }
+  function renderStep() {
+    stopMedia();
+    const s = session.steps[sIdx], body = document.getElementById('sbody');
+    body.innerHTML = '';
+    const inner = el('div', { class: 's-inner' });
+    body.append(inner);
+    ({ video: stepVideo, read: stepRead, task: stepTask, finish: stepTask, practice: stepPractice, informal: stepInformal })[s.type](s, inner);
+    updateSessionChrome();
+  }
+  let foot = { primary: null, secondary: null };
+  function renderFoot() {
+    const f = document.getElementById('sfoot'); if (!f || !session) return;
+    const s = session.steps[sIdx], done = stepDone(s);
+    const def = {
+      video: done ? ['Next', advance] : ['Mark as watched', () => { setDone(s.key); commit({ render: false }); advance(); }],
+      read: done ? ['Next', advance] : ["I've read it", () => { setDone(s.key); commit({ render: false }); advance(); }],
+      task: done ? ['Next', advance] : ['Done', () => { setDone(s.key); commit({ render: false }); advance(); }],
+      finish: done ? ['Next', advance] : ['Done', () => { setDone(s.key); commit({ render: false }); advance(); }],
+      practice: done ? ['Next', advance] : ['Log practice', () => foot.logPractice && foot.logPractice()],
+      informal: done ? ['Next', advance] : ['Save', () => foot.saveInformal && foot.saveInformal()]
+    }[s.type];
+    const last = session.steps.filter(x => !stepDone(x)).length <= (done ? 0 : 1);
+    const label = done && nextIndex() < 0 ? 'Finish' : def[0];
+    f.innerHTML = '';
+    f.append(el('div', {},
+      el('button', { class: 'btn ghost', onclick: () => { const i = nextIndex(); if (i < 0 || i === sIdx) closeSession(); else { sIdx = i; renderStep(); } } }, done || last ? 'Close' : (s.type === 'informal' ? 'Tonight' : 'Skip for now')),
+      el('button', { class: 'btn big ' + (done ? 'sage' : 'primary'), onclick: done && nextIndex() < 0 ? celebrate : def[1] }, label)));
+  }
+  function head(s, inner, extra) {
+    const it = s.key ? ITEMS[s.key] : null;
+    inner.append(el('div', { class: 'stack', style: 'gap:6px' },
+      el('span', { class: 'eyebrow' }, [stepKind(s), it && it.min ? `${it.approx ? '~' : ''}${it.min} min` : null, session.title].filter(Boolean).join(' · ')),
+      el('h2', {}, stepTitle(s)),
+      it && it.by ? el('p', { class: 'muted' }, it.by) : null, extra || null));
+  }
+
+  // ---- video
+  let ytApi = null;
+  function loadYT() {
+    if (ytApi) return ytApi;
+    ytApi = new Promise(res => { const prev = window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady = () => { prev && prev(); res(window.YT); }; document.head.append(el('script', { src: 'https://www.youtube.com/iframe_api' })); });
+    return ytApi;
+  }
+  async function ytPlayer(box, videoId, start, onState) {
+    const slot = el('div'); box.append(slot);
+    const YT = await loadYT();
+    if (!box.isConnected) return null;
+    return new YT.Player(slot, { videoId, playerVars: { start: Math.floor(start || 0), rel: 0, playsinline: 1, modestbranding: 1, cc_load_policy: 0 }, events: { onStateChange: e => onState(e, YT) } });
+  }
+  function stepVideo(s, inner) {
+    const it = ITEMS[s.key];
+    head(s, inner);
+    if (HOSTED) {
+      const box = el('div', { class: 'player' }); inner.append(box);
+      const posLine = el('p', { class: 'small muted', id: 'vpos' }, posOf(s.key) && !isDone(s.key) ? `Picking up at ${mmss(posOf(s.key))}.` : 'Your place is saved as you watch.');
+      inner.append(posLine);
+      const m = { kind: 'yt', key: s.key, tick: null, player: null };
+      media = m;
+      ytPlayer(box, it.id, isDone(s.key) ? 0 : posOf(s.key), (e, YT) => {
+        clearInterval(m.tick);
+        if (e.data === YT.PlayerState.PLAYING) m.tick = setInterval(() => trackVideo(m), 5000);
+        if (e.data === YT.PlayerState.PAUSED) trackVideo(m);
+        if (e.data === YT.PlayerState.ENDED) { finishVideo(m); }
+      }).then(p => { m.player = p; });
+    } else {
+      const pos = posOf(s.key);
+      inner.append(el('div', { class: 'away' },
+        el('p', {}, 'In the installed app this plays right here. In this preview, it opens in YouTube and you\'ll be asked how far you got when you come back.'),
+        ext(pos ? `Resume at ${mmss(pos)} on YouTube` : 'Watch on YouTube', ytWatch(it.id, pos), () => markOpened(s.key), 'btn primary'),
+        pos ? el('span', { class: 'pos' }, `Stopped at ${mmss(pos)}`) : null));
+    }
+  }
+  function trackVideo(m) {
+    if (!m.player || !m.player.getCurrentTime || isDone(m.key)) return;
+    const t = m.player.getCurrentTime(), d = m.player.getDuration ? m.player.getDuration() : 0;
+    if (!t) return;
+    if (d && t / d >= 0.92) return finishVideo(m);
+    setPos(m.key, t); commit({ render: false, delay: 15000 });
+  }
+  function finishVideo(m) {
+    if (isDone(m.key)) return;
+    setDone(m.key); commit({ render: false });
+    updateSessionChrome();
+    const pl = document.getElementById('vpos'); if (pl) pl.textContent = 'Watched. Tap Next when you\'re ready.';
+  }
+
+  // ---- reading + tasks
+  function stepRead(s, inner) {
+    const it = ITEMS[s.key];
+    head(s, inner);
+    if (HOSTED) {
+      inner.append(el('iframe', { class: 'reader', src: abs(it.url), title: it.title, loading: 'lazy' }),
+        el('p', { class: 'small muted' }, 'Shown from palousemindfulness.com. ', ext('Open in your browser', abs(it.url), null), ' if it\'s easier to read there.'));
+    } else {
+      inner.append(el('div', { class: 'away' }, el('p', {}, 'In the installed app this opens right here. In this preview it opens on the Palouse site.'), ext('Open the reading', abs(it.url), () => markOpened(s.key), 'btn primary')));
+    }
+  }
+  function stepTask(s, inner) {
+    const it = ITEMS[s.key];
+    head(s, inner);
+    inner.append(el('div', { class: 'away' }, el('div', { class: 'row' }, ext('Open', abs(it.url), () => markOpened(s.key), 'btn primary'), it.alt ? ext('Word version', abs(it.alt), null, 'btn') : null)));
+  }
+
+  // ---- formal practice
+  let audioCtx = null;
+  function bell(times = 1) {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      for (let k = 0; k < times; k++) {
+        const t0 = audioCtx.currentTime + k * 2.2;
+        [[1, .5], [2.76, .18], [5.4, .08], [8.93, .04]].forEach(([mult, g]) => {
+          const o = audioCtx.createOscillator(), v = audioCtx.createGain();
+          o.type = 'sine'; o.frequency.value = 262 * mult;
+          v.gain.setValueAtTime(0, t0); v.gain.linearRampToValueAtTime(g * .5, t0 + .01); v.gain.exponentialRampToValueAtTime(.0001, t0 + 6 / Math.sqrt(mult));
+          o.connect(v).connect(audioCtx.destination); o.start(t0); o.stop(t0 + 6);
+        });
+      }
+    } catch (e) {}
+  }
+  let wake = null;
+  async function keepAwake(on) { try { if (on && navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); else if (!on && wake) { await wake.release(); wake = null; } } catch (e) {} }
+
+  function dial(onToggle) {
+    const R = 92, C2 = 2 * Math.PI * R;
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 210 210'); svg.setAttribute('class', 'r'); svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = `<circle cx="105" cy="105" r="${R}" fill="none" stroke="var(--line)" stroke-width="8"/><circle cx="105" cy="105" r="${R}" fill="none" stroke="var(--sage)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C2}" stroke-dashoffset="${C2}"/>`;
+    const arc = svg.lastChild;
+    const btn = el('button', { class: 'play', 'aria-label': 'Play', onclick: onToggle }, icon('play'));
+    const time = el('div', { class: 'time' }, '0:00');
+    const root = el('div', { class: 'dial' }, el('div', { class: 'ring' }, svg, btn), time);
+    return {
+      root, time,
+      set(frac, label, playing) { arc.setAttribute('stroke-dashoffset', String(C2 * (1 - Math.min(1, Math.max(0, frac))))); time.textContent = label; btn.innerHTML = ''; btn.append(icon(playing ? 'pause' : 'play')); btn.setAttribute('aria-label', playing ? 'Pause' : 'Play'); }
+    };
+  }
+  function stepPractice(s, inner) {
+    const ids = s.free ? [s.pid] : dayPractice(s.n, s.d);
+    const logged = !s.free && dayEnt(s.n, s.d).done ? dayEnt(s.n, s.d) : null;
+    if (!s.pid || !ids.includes(s.pid)) s.pid = logged && logged.pid && ids.includes(logged.pid) ? logged.pid : (ids.length === 1 ? ids[0] : null);
+    const W8 = !s.free && s.n === 8;
+    if (!s.pid) {
+      inner.append(el('div', { class: 'stack', style: 'gap:6px' }, el('span', { class: 'eyebrow' }, `Formal practice · ${session.title}`), el('h2', {}, W8 ? 'Your own practice' : 'Choose today\'s practice'),
+        el('p', { class: 'muted' }, s.n === 5 && s.d < 2 ? 'Pick the one that fits what you\'re working with.' : 'Any practice you\'ve learned so far. Go with what feels right today.')));
+      const ch = el('div', { class: 'choices' });
+      ids.forEach(id => ch.append(el('button', { class: 'pr', onclick: () => { s.pid = id; renderStep(); } }, el('span', { class: 'ic' }, icon('play')), el('div', {}, el('strong', {}, P[id].t), P[id].prep ? el('div', { class: 'small muted' }, P[id].prep) : null), el('span', { class: 'small mono muted' }, `${P[id].min} min`))));
+      inner.append(ch);
+      foot.logPractice = () => { const t = ch.querySelector('button'); t && t.focus(); };
+      return;
+    }
+    const p = P[s.pid];
+    inner.append(el('div', { class: 'stack', style: 'gap:6px' },
+      el('span', { class: 'eyebrow' }, s.timerOnly ? 'Practise on your own' : `Formal practice · ${p.min} min · ${session.title}`),
+      el('h2', {}, s.timerOnly ? 'Silent timer' : p.t),
+      s.timerOnly ? null : p.prep ? el('p', { class: 'muted' }, p.prep) : null,
+      ids.length > 1 ? el('button', { class: 'linkbtn', style: 'justify-self:start', onclick: () => { s.pid = null; s.chosen = false; renderStep(); } }, 'Choose a different practice') : null));
+    if (logged) inner.append(el('p', { class: 'note' }, `Logged ${logged.date ? shortDate(logged.date) : ''}: ${logged.mins || 30} min${logged.note ? ' — ' + logged.note : ''}.`));
+
+    // Modes
+    const modes = [];
+    if (!s.timerOnly) {
+      if (HOSTED && p.video && (p.videoFirst || !p.audio)) modes.push(['video', 'Video']);
+      if (HOSTED && p.audio) modes.push(['audio', 'Audio']);
+      if (HOSTED && p.video && !(p.videoFirst || !p.audio)) modes.push(['video', 'Video + captions']);
+      if (!HOSTED) modes.push(['away', 'Guided']);
+    }
+    modes.push(['timer', 'Timer only']);
+    s.mode = modes.some(m => m[0] === s.mode) ? s.mode : modes[0][0];
+    let played = 0;
+    const area = el('div', { class: 'stack' });
+    if (modes.length > 1) inner.append(el('div', { class: 'seg', role: 'group', 'aria-label': 'How to practise' }, modes.map(([id, label]) => el('button', { 'aria-pressed': s.mode === id ? 'true' : 'false', onclick: () => { s.mode = id; renderStep(); } }, label))));
+    inner.append(area);
+
+    const mins = el('input', { type: 'number', id: 'pmins', min: 1, max: 180, value: logged ? logged.mins || p.min : (s.timerOnly ? 20 : p.then ? p.min + p.then : p.min), inputmode: 'numeric', style: 'width:5.5em' });
+    const finished = (m) => { played = Math.max(played, m); mins.value = String(Math.max(+mins.value || 0, Math.round(played)) || p.min); };
+
+    if (s.mode === 'audio') {
+      const a = new Audio(abs(p.audio)); a.preload = 'metadata';
+      const dl = dial(() => { if (a.paused) { a.play(); keepAwake(true); } else a.pause(); });
+      const upd = () => dl.set(a.duration ? a.currentTime / a.duration : 0, a.duration ? `${mmss(a.currentTime)} / ${mmss(a.duration)}` : mmss(a.currentTime), !a.paused);
+      ['timeupdate', 'play', 'pause', 'loadedmetadata'].forEach(ev => a.addEventListener(ev, upd));
+      a.addEventListener('ended', () => { keepAwake(false); finished(a.duration / 60); upd(); if (p.then) area.append(el('div', { class: 'note' }, `Guidance done. Keep walking on your own for another ${p.then} minutes.`, el('div', { class: 'row', style: 'margin-top:8px' }, el('button', { class: 'btn', onclick: () => { s.mode = 'timer'; s.timerMin = p.then; renderStep(); } }, `Start a ${p.then}-minute timer`)))); });
+      area.append(dl.root, el('div', { class: 'row', style: 'justify-content:center' },
+        el('button', { class: 'btn ghost', onclick: () => { a.currentTime = Math.max(0, a.currentTime - 15); } }, '−15 s'),
+        el('button', { class: 'btn ghost', onclick: () => { a.currentTime = Math.min(a.duration || 0, a.currentTime + 15); } }, '+15 s')));
+      upd();
+      media = { kind: 'audio', stop: () => { a.pause(); finished(a.currentTime / 60); keepAwake(false); } };
+    } else if (s.mode === 'video') {
+      const box = el('div', { class: 'player' }); area.append(box);
+      const m = { kind: 'yt', player: null };
+      media = { kind: 'ytp', stop: () => { try { finished(m.player.getCurrentTime() / 60); m.player.destroy(); } catch (e) {} } };
+      ytPlayer(box, p.video, 0, (e, YT) => { if (e.data === YT.PlayerState.ENDED) finished(m.player.getDuration() / 60); }).then(pl => { m.player = pl; });
+    } else if (s.mode === 'away') {
+      area.append(el('div', { class: 'away' },
+        el('p', {}, 'In the installed app the guided audio plays right here. In this preview, open it on the Palouse site, or use the timer below the line.'),
+        ext('Open the guided practice', abs(p.page), null, 'btn primary')));
+    } else {
+      let total = (s.timerMin || (s.free && s.timerOnly ? 20 : p.then || p.min)) * 60, endAt = 0, remain = total, iv = null;
+      const dl = dial(() => {
+        if (iv) { remain = Math.max(0, (endAt - now()) / 1000); clearInterval(iv); iv = null; keepAwake(false); draw(); }
+        else { if (remain <= 0) remain = total; if (remain === total) bell(1); endAt = now() + remain * 1000; iv = setInterval(tickT, 250); keepAwake(true); draw(); }
+      });
+      const draw = () => dl.set(1 - remain / total, mmss(remain), !!iv);
+      const tickT = () => { remain = Math.max(0, (endAt - now()) / 1000); draw(); if (remain <= 0) { clearInterval(iv); iv = null; bell(3); keepAwake(false); finished(total / 60); draw(); } };
+      const setMin = m => { if (iv) return; total = Math.max(60, Math.min(120 * 60, m * 60)); remain = total; s.timerMin = total / 60; draw(); };
+      area.append(dl.root, el('div', { class: 'row', style: 'justify-content:center' },
+        el('button', { class: 'btn ghost', onclick: () => setMin(total / 60 - 5) }, '−5 min'),
+        el('button', { class: 'btn ghost', onclick: () => setMin(total / 60 + 5) }, '+5 min')),
+        el('p', { class: 'small muted', style: 'text-align:center' }, 'A bell sounds at the start and three at the end.'));
+      draw();
+      media = { kind: 'timer', stop: () => { if (iv) { clearInterval(iv); finished((total - Math.max(0, (endAt - now()) / 1000)) / 60); } keepAwake(false); } };
+    }
+
+    // Reflection (the app's version of the practice sheet)
+    const MOODS = ['Settled', 'Restless', 'Sleepy', 'Distracted', 'Uncomfortable', 'Kind to myself'];
+    const chosen = new Set(logged ? logged.moods || [] : []);
+    const note = el('textarea', { id: 'pnote', placeholder: 'Anything you noticed? (optional)', 'aria-label': 'Practice note' }); note.value = logged ? logged.note || '' : '';
+    inner.append(el('div', { class: 'reflect' },
+      el('h3', {}, 'After you practise'),
+      el('div', { class: 'row' }, MOODS.map(m => { const b = el('button', { class: 'chip', 'aria-pressed': chosen.has(m) ? 'true' : 'false', onclick: () => { chosen.has(m) ? chosen.delete(m) : chosen.add(m); b.setAttribute('aria-pressed', chosen.has(m) ? 'true' : 'false'); } }, m); return b; })),
+      note,
+      el('label', { class: 'row small', for: 'pmins' }, 'Minutes practised', mins)));
+    foot.logPractice = () => {
+      if (media && media.stop) { media.stop(); media = null; }
+      const rec = { pid: s.pid, mins: Math.max(1, Math.round(+mins.value || p.min)), moods: [...chosen], note: note.value.trim() };
+      if (s.free) { logFree(s.pid, rec.mins, rec); s.logged = true; } else logDay(s.n, s.d, rec);
+      commit({ render: false });
+      advance();
+    };
+  }
+
+  // ---- informal practice
+  function stepInformal(s, inner) {
+    const w = W[s.n], e = infEnt(s.n, s.d);
+    inner.append(el('div', { class: 'stack', style: 'gap:6px' }, el('span', { class: 'eyebrow' }, `Informal practice · ${session.title}`), el('h2', {}, s.n === 8 ? 'Looking back' : 'Through the day'), el('p', {}, w.informal)));
+    const ta = el('textarea', { id: 'inote', 'aria-label': w.prompt, placeholder: 'A sentence or two is plenty.' }); ta.value = e.note || '';
+    inner.append(el('div', { class: 'reflect' }, el('h3', {}, w.prompt), ta,
+      el('p', { class: 'small muted' }, 'If the moment hasn\'t happened yet, tap Tonight and come back before bed.')));
+    foot.saveInformal = () => { logInf(s.n, s.d, ta.value.trim()); commit({ render: false }); advance(); };
+  }
+
+  function stopMedia() {
+    if (media && media.kind === 'yt') { try { trackVideo(media); media.player && media.player.destroy(); } catch (e) {} clearInterval(media.tick); }
+    else if (media && media.stop) { try { media.stop(); } catch (e) {} }
+    media = null; foot.logPractice = null; foot.saveInformal = null;
+  }
+
+  function celebrate() {
+    stopMedia();
+    const body = document.getElementById('sbody'); body.innerHTML = '';
+    const st = streak(), sess = session;
+    const tomorrow = sess.kind === 'day' && sess.n && sess.d < DAYS - 1 ? `Tomorrow: Day ${sess.d + 2}, ${practiceLabel(sess.n, sess.d + 1)}.` : sess.kind === 'day' && sess.n ? `That was the last practice day of Week ${sess.n}.` : '';
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 140 140'); svg.setAttribute('class', 'big'); svg.setAttribute('aria-hidden', 'true');
+    svg.innerHTML = '<circle cx="70" cy="70" r="60" fill="none" stroke="var(--line)" stroke-width="8"/><circle class="fill" cx="70" cy="70" r="60" fill="none" stroke="var(--sage)" stroke-width="8" stroke-linecap="round" transform="rotate(-90 70 70)"/><path d="M48 72l15 15 30-32" fill="none" stroke="var(--sage)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>';
+    body.append(el('div', { class: 's-inner' }, el('div', { class: 'cele' }, svg,
+      el('h1', {}, sess.kind === 'day' ? (sess.n ? `Day ${sess.d + 1} complete` : 'You\'re set up') : sess.kind === 'free' ? 'Practice logged' : 'All caught up'),
+      st ? el('span', { class: 'pill hot' }, icon('leaf'), `${st}-day streak`) : null,
+      tomorrow ? el('p', { class: 'muted' }, tomorrow) : null,
+      sess.n === 0 && sess.kind === 'day' ? el('p', { class: 'muted' }, 'Week 1 is ready when you are.') : null)));
+    updateSessionChrome();
+    const f = document.getElementById('sfoot'); f.innerHTML = '';
+    f.append(el('div', {}, el('span'), el('button', { class: 'btn big sage', onclick: closeSession }, 'Done')));
+  }
+
+  // ================================================================ leaving the app (preview fallback) + coming back
   function markOpened(key) {
     const it = ITEMS[key];
     S.pending = { kind: 'item', key, openedAt: now(), from: posOf(key) }; S.pendingAt = now();
@@ -737,336 +2383,12 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; display: grid; ga
     touchWeek(it.week);
     commit({ render: false });
   }
-  function markPlaylist(w) {
-    S.pending = { kind: 'playlist', week: w, openedAt: now() }; S.pendingAt = now();
-    S.last = { week: w, label: `Opened the Week ${w} playlist`, at: now() };
-    touchWeek(w);
-    commit({ render: false });
-  }
-  const watchHref = it => ytUrl(it.id, W[it.week].playlist, posOf(it.key));
-
-  // ---------------------------------------------------------------- view state
-  let view = 0;
-
-  // ---------------------------------------------------------------- resume card
-  function renderResume() {
-    const box = document.getElementById('resume');
-    box.innerHTML = '';
-    const aw = activeWeek(), w = W[aw], nx = nextItem(aw);
-    const gapDays = S.last ? Math.floor((now() - S.last.at) / DAY) : 0;
-
-    box.append(el('span', { class: 'eyebrow', id: 'resumeH' }, S.last ? `Pick up where you left off · ${weekName(aw)}` : 'Start here'));
-    if (S.last) box.append(el('p', { class: 'small muted' }, `Last time: ${S.last.label}, ${ago(S.last.at)}.`));
-    if (gapDays >= 4) box.append(el('p', { class: 'note' }, `Welcome back. A ${gapDays}-day gap is common and you don't need to restart. Carry on from here, and if it helps, repeat a practice you know before moving on.`));
-
-    if (nx) {
-      const pos = posOf(nx.key);
-      box.append(el('div', { class: 'what' }, nx.title));
-      const meta = el('div', { class: 'meta' },
-        el('span', {}, `${kindLabel[nx.kind]}${nx.min ? ' · ' + (nx.approx ? '~' : '') + nx.min + ' min' : ''}`),
-        nx.by ? el('span', {}, nx.by) : null,
-        pos ? el('span', { class: 'pos' }, `Stopped at ${mmss(pos)}`) : null);
-      box.append(meta);
-      const row = el('div', { class: 'row' });
-      if (nx.kind === 'video') {
-        if (canEmbed) row.append(el('button', { class: 'btn primary', onclick: () => { goWeek(aw); setTimeout(() => playHere(nx.key), 50); } }, pos ? `Resume at ${mmss(pos)}` : 'Play'));
-        else row.append(ext(pos ? `Resume at ${mmss(pos)} on YouTube` : 'Watch on YouTube', watchHref(nx), () => markOpened(nx.key), 'btn primary'));
-      } else {
-        row.append(ext(nx.kind === 'read' ? 'Open reading' : 'Open', nx.url, () => markOpened(nx.key), 'btn primary'));
-      }
-      row.append(el('button', { class: 'btn', onclick: () => { setDone(nx.key, true); commit(); } }, 'Mark done'));
-      if (view !== aw) row.append(el('button', { class: 'linkbtn', onclick: () => goWeek(aw) }, `Open ${weekName(aw)}`));
-      box.append(row);
-    } else if (hasLog(w) && daysDone(aw) < DAYS) {
-      box.append(el('div', { class: 'what' }, `${weekName(aw)}: videos and reading done`));
-      box.append(el('p', {}, `${DAYS - daysDone(aw)} practice ${DAYS - daysDone(aw) === 1 ? 'day' : 'days'} left before Week ${aw + 1}.`));
-    } else if (aw < 8) {
-      const start = S.weekStart[aw];
-      const ready = !start || now() - start >= 7 * DAY;
-      box.append(el('div', { class: 'what' }, `${weekName(aw)} complete`));
-      box.append(el('p', {}, ready ? `You're ready for Week ${aw + 1}.` : `The course asks for at least seven days per week, so Week ${aw + 1} opens up from ${shortDate(start + 7 * DAY)}. Keep practising until then.`));
-      box.append(el('div', { class: 'row' }, el('button', { class: 'btn primary', onclick: () => goWeek(aw + 1) }, `Go to Week ${aw + 1}`)));
-    } else {
-      box.append(el('div', { class: 'what' }, 'Course complete. Well done.'));
-      box.append(el('p', {}, 'Keep the practices that work for you, and request your certificate if you want one.'));
-    }
-
-    if (hasLog(w) && (nx || daysDone(aw) < DAYS)) {
-      const d = Array.from({ length: DAYS }, (_, i) => i).find(i => !dayEnt(aw, i).done);
-      const line = loggedToday(aw)
-        ? el('p', { class: 'small' }, '✓ Today\'s practice is logged.')
-        : d != null ? el('div', { class: 'row small' }, el('span', {}, `Today's practice: ${planFor(aw, d)}, about 30 min.`), el('button', { class: 'btn sage', onclick: () => { setDay(aw, d, true); commit(); } }, 'Log it')) : null;
-      if (line) box.append(line);
-    }
-    if (aw > 0) box.append(el('p', { class: 'small muted mono' }, `About ${hm(minutesLeft(w))} left in ${weekName(aw)}${hasLog(w) ? ', including practice' : ''}.`));
-
-    const bh = behind(aw);
-    if (bh.length) {
-      const b = el('div', { class: 'behind' }, el('strong', {}, 'Still open from earlier: '));
-      bh.forEach((x, i) => {
-        const bits = [];
-        const v = x.items.filter(i => i.kind === 'video').length, r = x.items.filter(i => i.kind !== 'video').length;
-        if (v) bits.push(`${v} video${v > 1 ? 's' : ''}`);
-        if (r) bits.push(`${r} ${x.w === 0 ? 'step' : 'reading'}${r > 1 ? 's' : ''}`);
-        if (x.days) bits.push(`${x.days} practice day${x.days > 1 ? 's' : ''}`);
-        b.append(i ? ' · ' : '', el('button', { onclick: () => goWeek(x.w) }, weekName(x.w)), ` (${bits.join(', ')})`);
-      });
-      box.append(b);
-    }
-  }
-
-  // ---------------------------------------------------------------- trail
-  function drawTrail() {
-    const svg = document.getElementById('trail');
-    svg.innerHTML = '';
-    const aw = activeWeek();
-    const xs = W.map((_, i) => 40 + i * (640 / (W.length - 1)));
-    const ys = W.map((_, i) => 62 - Math.sin(i * 0.9) * 16 - i * 2);
-    let d = `M0 ${ys[0] + 6}`;
-    xs.forEach((x, i) => { const px = i ? xs[i - 1] : 0, py = i ? ys[i - 1] : ys[0] + 6, cx = (px + x) / 2; d += ` C${cx} ${py} ${cx} ${ys[i]} ${x} ${ys[i]}`; });
-    const ly = ys[ys.length - 1];
-    d += ` C700 ${ly} 700 ${ly - 4} 720 ${ly - 6}`;
-    const mk = (tag, a) => { const n = document.createElementNS(NS, tag); Object.entries(a).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
-    svg.append(mk('path', { d: d + ' L720 120 L0 120 Z', fill: 'var(--accent-soft)' }));
-    svg.append(mk('path', { d, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.5, 'stroke-dasharray': '3 5' }));
-    W.forEach((w, i) => {
-      const sel = view === i, p = weekProgress(w), r = sel ? 13 : 10;
-      const g = mk('g', { class: 'stop' + (sel ? ' sel' : ''), role: 'listitem', tabindex: 0, 'aria-label': `${weekName(w.n)}: ${w.title}, ${Math.round(p * 100)}% done${w.n === aw ? ', where you left off' : ''}` });
-      if (w.n === aw) g.append(mk('circle', { cx: xs[i], cy: ys[i], r: r + 5, fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1, 'stroke-dasharray': '2 3' }));
-      g.append(mk('circle', { cx: xs[i], cy: ys[i], r, fill: p >= 1 ? 'var(--sage)' : 'var(--surface)', stroke: sel ? 'var(--ink)' : (p > 0 ? 'var(--sage)' : 'var(--line)'), 'stroke-width': sel ? 2 : 1.5 }));
-      if (p > 0 && p < 1) { const c = 2 * Math.PI * r; g.append(mk('circle', { cx: xs[i], cy: ys[i], r, fill: 'none', stroke: 'var(--sage)', 'stroke-width': 3, 'stroke-dasharray': `${c * p} ${c}`, transform: `rotate(-90 ${xs[i]} ${ys[i]})` })); }
-      const num = mk('text', { x: xs[i], y: ys[i] + 4, 'text-anchor': 'middle' });
-      num.style.fill = p >= 1 ? 'var(--surface)' : 'var(--ink)'; num.style.fontSize = '11px';
-      num.textContent = w.n === 0 ? '·' : w.n; g.append(num);
-      const lab = mk('text', { x: xs[i], y: ys[i] + 32, 'text-anchor': 'middle' }); lab.textContent = w.short; g.append(lab);
-      g.addEventListener('click', () => goWeek(i, true));
-      g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goWeek(i, true); } });
-      svg.append(g);
-    });
-  }
-
-  // ---------------------------------------------------------------- practice log
-  function planFor(n, d) {
-    switch (n) {
-      case 1: return d === 0 ? 'Raisin Meditation' : 'Body Scan';
-      case 2: return d % 2 === 0 ? 'Sitting Meditation' : 'Body Scan';
-      case 3: return d === 5 ? 'Body Scan' : (d % 2 === 0 ? 'Mindful Yoga 1' : 'Sitting Meditation');
-      case 4: return d % 2 === 0 ? 'Mindful Yoga 2' : 'Sitting Meditation';
-      case 5: return d < 2 ? '“Turning Toward” Meditation' : 'a practice of your choice';
-      case 6: return d === 0 ? 'Mountain or Lake Meditation' : 'Body Scan, Sitting or Yoga';
-      case 7: return d === 0 ? 'Lovingkindness' : d === 1 ? 'Walking Meditation' : 'a practice of your choice';
-      default: return '';
-    }
-  }
-  function drawToday() {
-    const w = W[view];
-    const days = document.getElementById('days'), txt = document.getElementById('todayText'), meta = document.getElementById('todayMeta'), logRow = document.getElementById('logRow');
-    days.innerHTML = ''; logRow.innerHTML = '';
-    if (!hasLog(w)) {
-      document.getElementById('todayH').textContent = w.n === 0 ? 'Before you begin' : 'Your own practice';
-      txt.textContent = w.n === 0
-        ? 'Plan for about 50 hours over eight or more weeks: around 2 hours of videos and reading each week, plus 30–35 minutes of practice a day. Spend at least seven days on each week.'
-        : 'Week 8 has no practice log. Choose what you will keep doing, and how often, so it fits your life.';
-      meta.textContent = '';
-    } else {
-      document.getElementById('todayH').textContent = `Week ${w.n} practice log`;
-      const n = daysDone(w.n);
-      const next = Array.from({ length: DAYS }, (_, i) => i).find(i => !dayEnt(w.n, i).done);
-      const start = S.weekStart[w.n];
-      meta.textContent = `${n} of ${DAYS} days${start ? ' · started ' + shortDate(start) : ''}`;
-      if (n >= DAYS) txt.textContent = 'Six days logged. When the ideas from the videos and reading feel settled and at least a week has passed, move on.';
-      else txt.textContent = `Day ${next + 1}: ${planFor(w.n, next)} (about 30 min), plus your informal practice and a few minutes on your sheet before bed.`;
-      if (n < DAYS) {
-        logRow.append(loggedToday(w.n)
-          ? el('button', { class: 'btn', disabled: '' }, '✓ Logged today')
-          : el('button', { class: 'btn sage', onclick: () => { setDay(w.n, next, true); commit(); } }, `Log today's practice (day ${next + 1})`));
-      }
-      for (let d = 0; d < DAYS; d++) {
-        const e = dayEnt(w.n, d);
-        const b = el('button', { class: 'day', 'aria-pressed': e.done ? 'true' : 'false', title: planFor(w.n, d), 'aria-label': `Day ${d + 1}: ${planFor(w.n, d)}${e.done ? ', done' : ''}` },
-          String(d + 1), e.done && e.date ? el('small', {}, new Date(e.date + 'T12:00').toLocaleDateString(undefined, { month: 'numeric', day: 'numeric' })) : null);
-        b.onclick = () => { setDay(w.n, d, !e.done); commit(); };
-        days.append(b);
-      }
-    }
-    const p = weekProgress(w);
-    document.getElementById('meter').style.width = (p * 100).toFixed(0) + '%';
-    const all = W.reduce((a, x) => a + weekProgress(x), 0) / W.length;
-    document.getElementById('meterText').textContent = `${weekName(w.n)} ${Math.round(p * 100)}% · Whole course ${Math.round(all * 100)}%`;
-  }
-
-  // ---------------------------------------------------------------- items (updated in place so a playing video is never interrupted)
-  function itemRow(it) {
-    const li = el('li', { class: 'item', 'data-key': it.key });
-    const b = el('button', { class: 'check', 'aria-label': `Mark “${it.title}” as done` }, tick());
-    b.onclick = () => { setDone(it.key, !isDone(it.key)); commit(); };
-    const titleLink = it.kind === 'video'
-      ? ext(it.title, watchHref(it), () => markOpened(it.key))
-      : ext(it.title, it.url, () => markOpened(it.key));
-    titleLink.dataset.role = 'title';
-    const body = el('div', {}, el('div', { class: 't' }, titleLink), it.by ? el('div', { class: 'by' }, it.by) : null);
-    const tools = el('div', { class: 'tools' });
-    if (it.kind === 'video') {
-      if (canEmbed) tools.append(el('button', { class: 'linkbtn', 'data-role': 'play', onclick: () => playHere(it.key) }, 'Play here'));
-      tools.append(el('span', { class: 'pos', 'data-role': 'pos' }));
-    }
-    if (it.alt) tools.append(ext('Word version', it.alt));
-    if (tools.childNodes.length) body.append(tools);
-    li.append(b, body, el('span', { class: 'min' }, it.min ? `${it.approx ? '~' : ''}${it.min} min` : ''));
-    return li;
-  }
-  function updateItems() {
-    const aw = activeWeek(), nx = nextItem(aw);
-    document.querySelectorAll('[data-key]').forEach(li => {
-      const k = li.dataset.key, it = ITEMS[k], done = isDone(k), pos = posOf(k);
-      li.classList.toggle('done', done);
-      li.classList.toggle('next', !!nx && nx.key === k);
-      li.querySelector('.check').setAttribute('aria-pressed', done ? 'true' : 'false');
-      if (it.kind === 'video') {
-        li.querySelector('[data-role="title"]').href = watchHref(it);
-        const p = li.querySelector('[data-role="pos"]');
-        p.textContent = !done && pos ? `Stopped at ${mmss(pos)}` : '';
-        const play = li.querySelector('[data-role="play"]');
-        if (play) play.textContent = !done && pos ? `Resume here at ${mmss(pos)}` : 'Play here';
-      }
-    });
-  }
-
-  // ---------------------------------------------------------------- embedded YouTube (hosted builds only)
-  let ytApi = null, active = null;
-  function loadYT() {
-    if (ytApi) return ytApi;
-    ytApi = new Promise(res => {
-      const prev = window.onYouTubeIframeAPIReady;
-      window.onYouTubeIframeAPIReady = () => { prev && prev(); res(window.YT); };
-      document.head.append(el('script', { src: 'https://www.youtube.com/iframe_api' }));
-    });
-    return ytApi;
-  }
-  async function playHere(key) {
-    const li = document.querySelector(`[data-key="${key}"]`);
-    if (!li) return;
-    if (active && active.key === key) return;
-    if (active) stopActive();
-    const box = el('div', { class: 'player' }), slot = el('div');
-    box.append(slot); li.append(box);
-    li.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    const YT = await loadYT();
-    const it = ITEMS[key];
-    const player = new YT.Player(slot, {
-      videoId: it.id,
-      playerVars: { start: Math.floor(posOf(key)), rel: 0, playsinline: 1, autoplay: 1, modestbranding: 1 },
-      events: {
-        onStateChange: e => {
-          clearInterval(active && active.tick);
-          if (e.data === YT.PlayerState.PLAYING) active.tick = setInterval(() => track(key, player), 5000);
-          if (e.data === YT.PlayerState.PAUSED) track(key, player);
-          if (e.data === YT.PlayerState.ENDED) { setDone(key, true); commit({ render: false }); refresh(); }
-        }
-      }
-    });
-    active = { key, player, box, tick: null };
-  }
-  function track(key, player) {
-    const t = player.getCurrentTime ? player.getCurrentTime() : 0, d = player.getDuration ? player.getDuration() : 0;
-    if (!t) return;
-    if (d && t / d >= 0.92) { if (!isDone(key)) { setDone(key, true); commit({ render: false }); refresh(); } return; }
-    setPos(key, t);
-    commit({ render: false, delay: 15000 });
-    updateItems();
-  }
-  function stopActive() {
-    if (!active) return;
-    try { track(active.key, active.player); } catch (e) {}
-    clearInterval(active.tick);
-    try { active.player.destroy(); } catch (e) {}
-    active.box.remove(); active = null;
-  }
-
-  // ---------------------------------------------------------------- week view
-  function renderWeek() {
-    stopActive();
-    const w = W[view], root = document.getElementById('week');
-    root.innerHTML = '';
-    root.append(el('div', { class: 'week-head' },
-      el('span', { class: 'eyebrow' }, w.n === 0 ? 'Before Week 1' : `Week ${w.n} of 8 · ${w.subtitle}`),
-      el('h2', {}, w.title),
-      el('p', {}, w.summary)));
-
-    if (w.n === 0) {
-      const setup = w.steps.reduce((a, s) => a + s.min, 0);
-      root.append(el('div', { class: 'budget' },
-        el('div', { class: 'total' }, el('small', {}, 'Setup time'), el('b', {}, hm(setup)), el('small', {}, 'one sitting or two')),
-        el('div', {}, el('small', {}, 'Whole course'), el('b', {}, '~50 h'), el('small', {}, 'over 8+ weeks')),
-        el('div', {}, el('small', {}, 'Daily practice'), el('b', {}, '30–35 min'), el('small', {}, '6 days a week'))));
-      root.append(el('section', { class: 'block' }, el('div', { class: 'block-head' }, el('h3', {}, 'Five steps to begin')), el('ul', { class: 'items' }, ORDER[0].map(itemRow))));
-    } else {
-      const vids = ORDER[w.n].filter(x => x.kind === 'video'), reads = ORDER[w.n].filter(x => x.kind === 'read');
-      const vMin = vids.reduce((a, x) => a + x.min, 0), rMin = reads.reduce((a, x) => a + x.min, 0);
-      const pMin = hasLog(w) ? PRACTICE_MIN * DAYS : 0;
-      root.append(el('div', { class: 'budget', role: 'group', 'aria-label': 'Time needed this week' },
-        el('div', {}, el('small', {}, 'Videos'), el('b', {}, hm(vMin)), el('small', {}, `${vids.length} videos`)),
-        el('div', {}, el('small', {}, 'Reading'), el('b', {}, hm(rMin)), el('small', {}, `${reads.length} pieces, est.`)),
-        el('div', {}, el('small', {}, 'Practice'), el('b', {}, pMin ? hm(pMin) : 'Your choice'), el('small', {}, pMin ? '~35 min × 6 days' : 'no log this week')),
-        el('div', { class: 'total' }, el('small', {}, 'Left this week'), el('b', { id: 'leftMin' }, hm(minutesLeft(w))), el('small', {}, `of ≈ ${hm(vMin + rMin + pMin)} in total`))));
-      if (w.note) root.append(el('p', { class: 'note' }, w.note));
-
-      root.append(el('section', { class: 'block' },
-        el('div', { class: 'block-head' }, el('h3', {}, 'Watch'),
-          ext(`Play all on YouTube · ${hm(vMin)}`, `https://www.youtube.com/playlist?list=${w.playlist}`, () => markPlaylist(w.n), 'btn')),
-        canEmbed ? null : el('p', { class: 'small muted' }, 'Videos open in YouTube. When you come back, you\'ll be asked whether you finished, so your place is kept.'),
-        el('ul', { class: 'items' }, vids.map(itemRow))));
-
-      root.append(el('section', { class: 'block' },
-        el('div', { class: 'block-head' }, el('h3', {}, 'Read'), el('span', { class: 'mono muted', style: 'font-size:.8rem' }, 'times are estimates')),
-        el('ul', { class: 'items' }, reads.map(itemRow))));
-
-      const pr = el('section', { class: 'practice', 'aria-labelledby': `pr${w.n}` },
-        el('h3', { id: `pr${w.n}` }, 'Daily practice'),
-        el('div', {}, el('div', { class: 'eyebrow', style: 'margin-bottom:6px' }, 'Formal · about 30 min'), el('ul', {}, w.formal.map(f => el('li', {}, f)))),
-        el('div', { class: 'sheets' }, w.formalLinks.map(l => ext('▶ ' + l.t, abs(l.url), null, 'btn'))),
-        el('div', {}, el('div', { class: 'eyebrow', style: 'margin-bottom:6px' }, 'Informal · through the day'), el('p', {}, w.informal)));
-      if (w.sheets || w.extraSheets) {
-        const s = el('div', { class: 'sheets' });
-        if (w.sheets) s.append(ext('Formal sheet (PDF)', abs(`/practice/${w.sheets}-formal.pdf`), null, 'btn'), ext('Informal sheet (PDF)', abs(`/practice/${w.sheets}-informal.pdf`), null, 'btn'));
-        (w.extraSheets || []).forEach(x => s.append(ext(x.t + ' (PDF)', abs(x.url), null, 'btn')));
-        pr.append(el('div', {}, el('div', { class: 'eyebrow', style: 'margin-bottom:6px' }, 'Practice sheets'), s,
-          w.sheets ? el('p', { class: 'muted small', style: 'margin-top:6px' }, 'Word versions: ', ext('formal', abs(`/practice/${w.sheets}-formal.docx`)), ', ', ext('informal', abs(`/practice/${w.sheets}-informal.docx`)), '. Keep them if you want a certificate.') : null));
-      }
-      root.append(pr);
-
-      if (w.finish) root.append(el('section', { class: 'block' }, el('div', { class: 'block-head' }, el('h3', {}, 'Finishing the course')), el('ul', { class: 'items' }, ORDER[8].filter(x => x.kind === 'finish').map(itemRow))));
-      if (w.supplementary) root.append(el('details', {},
-        el('summary', {}, `Optional extras (${w.supplementary.length})`),
-        el('ul', {}, w.supplementary.map(s => el('li', {}, ext(s.t, abs(s.url)), s.by ? ` · ${s.by}` : '', s.min ? ` · ${s.min} min` : '')))));
-    }
-
-    const nav = el('div', { class: 'next' });
-    nav.append(view > 0 ? el('button', { class: 'btn', onclick: () => goWeek(view - 1, true) }, '← ' + weekName(view - 1)) : el('span'));
-    nav.append(ext('Open original page', abs(w.page), null, 'btn'));
-    if (view < W.length - 1) nav.append(el('button', { class: 'btn', onclick: () => goWeek(view + 1, true) }, weekName(view + 1) + ' →'));
-    root.append(nav);
-    updateItems();
-  }
-
-  function goWeek(i, scroll) {
-    stopActive();
-    view = i;
-    refresh(true);
-    if (scroll) document.getElementById('week').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-  }
-
-  function refresh(rebuildWeek) {
-    renderResume(); drawTrail(); drawToday();
-    if (rebuildWeek && !active) renderWeek(); else { updateItems(); const lm = document.getElementById('leftMin'); if (lm && view > 0) lm.textContent = hm(minutesLeft(W[view])); }
-    if (document.getElementById('backupBox').open) fillBackup();
-  }
-
-  // ---------------------------------------------------------------- welcome-back sheet
   let sheetFor = 0;
   function closeSheet(clear) {
     document.getElementById('sheet').hidden = true;
-    if (clear) { S.pending = null; S.pendingAt = now(); commit(); }
+    if (clear) { S.pending = null; S.pendingAt = now(); commit({ render: false }); }
+    render();
+    if (session) { renderFoot(); if (clear && stepDone(session.steps[sIdx])) advance(); else renderStep(); }
   }
   function checkPending() {
     const p = S.pending;
@@ -1074,87 +2396,38 @@ footer { border-top: 1px solid var(--line); padding-top: 16px; display: grid; ga
     const age = now() - p.openedAt;
     if (age < 20000) { clearTimeout(checkPending.t); checkPending.t = setTimeout(checkPending, 20000 - age + 200); return; }
     if (sheetFor === S.pendingAt && !document.getElementById('sheet').hidden) return;
+    const it = ITEMS[p.key];
+    if (!it || isDone(it.key)) { S.pending = null; S.pendingAt = now(); commit({ render: false }); return; }
     sheetFor = S.pendingAt;
-    const away = Math.max(1, Math.round((now() - p.openedAt) / 60000));
-    const body = document.getElementById('sheetBody');
-    body.innerHTML = '';
-    const later = el('button', { class: 'linkbtn', onclick: () => closeSheet(false) }, 'Ask me later');
-
-    if (p.kind === 'playlist') {
-      const vids = ORDER[p.week].filter(x => x.kind === 'video' && !isDone(x.key));
-      if (!vids.length) { closeSheet(true); return; }
-      let acc = 0;
-      const boxes = vids.map(v => { acc += v.min; const id = 'pl-' + v.key; return { v, input: el('input', { type: 'checkbox', id, checked: acc <= away + 1 ? '' : null }) }; });
-      body.append(el('h3', { id: 'sheetH' }, `Back from the Week ${p.week} videos?`),
-        el('p', { class: 'small muted' }, `You opened the playlist ${ago(p.openedAt)}. Tick the ones you finished.`),
-        el('ul', {}, boxes.map(({ v, input }) => el('li', {}, el('label', { for: input.id }, input, el('span', {}, v.title, el('span', { class: 'muted small' }, ` · ${v.min} min`)))))),
-        el('div', { class: 'acts' },
-          el('button', { class: 'btn sage', onclick: () => { boxes.forEach(({ v, input }) => { if (input.checked) setDone(v.key, true); }); closeSheet(true); } }, 'Save'),
-          el('button', { class: 'btn', onclick: () => closeSheet(true) }, "I didn't watch any"),
-          later));
+    const away = Math.max(1, Math.round(age / 60000));
+    const body = document.getElementById('sheetBody'); body.innerHTML = '';
+    const later = el('button', { class: 'linkbtn', onclick: () => { document.getElementById('sheet').hidden = true; } }, 'Ask me later');
+    if (it.kind === 'video') {
+      const guess = Math.max(1, Math.min(it.min - 1, Math.round((p.from || 0) / 60) + away));
+      const inp = el('input', { type: 'number', id: 'stopMin', min: 0, max: it.min + 5, value: guess, inputmode: 'numeric' });
+      body.append(el('h3', { id: 'sheetH' }, `Back from “${it.title}”?`),
+        el('p', { class: 'small muted' }, `You opened it ${ago(p.openedAt)}${p.from ? ` at ${mmss(p.from)}` : ''}. It's ${it.min} minutes long.`),
+        el('div', { class: 'row' }, el('button', { class: 'btn sage', onclick: () => { setDone(it.key); closeSheet(true); } }, 'I finished it')),
+        el('div', { class: 'row' }, el('label', { for: 'stopMin', class: 'row' }, 'I stopped at', inp, 'min'), el('button', { class: 'btn', onclick: () => { setPos(it.key, (parseFloat(inp.value) || 0) * 60); closeSheet(true); } }, 'Save my place')),
+        el('div', { class: 'row small' }, el('button', { class: 'linkbtn', onclick: () => closeSheet(true) }, "I didn't watch it"), ' · ', later));
     } else {
-      const it = ITEMS[p.key];
-      if (!it || isDone(it.key)) { closeSheet(true); return; }
-      if (it.kind === 'video') {
-        const guess = Math.max(1, Math.min(it.min - 1, Math.round((p.from || 0) / 60) + away));
-        const inp = el('input', { type: 'number', id: 'stopMin', min: 0, max: it.min + 5, value: guess, inputmode: 'numeric' });
-        body.append(el('h3', { id: 'sheetH' }, `Back from “${it.title}”?`),
-          el('p', { class: 'small muted' }, `You opened it ${ago(p.openedAt)}${p.from ? ` at ${mmss(p.from)}` : ''}. It's ${it.min} minutes long.`),
-          el('div', { class: 'acts' }, el('button', { class: 'btn sage', onclick: () => { setDone(it.key, true); closeSheet(true); } }, 'I finished it')),
-          el('div', { class: 'acts' },
-            el('label', { for: 'stopMin' }, 'I stopped at', inp, 'min'),
-            el('button', { class: 'btn', onclick: () => { setPos(it.key, (parseFloat(inp.value) || 0) * 60); closeSheet(true); } }, 'Save my place')),
-          el('div', { class: 'acts' }, el('button', { class: 'linkbtn', onclick: () => closeSheet(true) }, "I didn't watch it"), ' · ', later));
-      } else {
-        body.append(el('h3', { id: 'sheetH' }, `Finished “${it.title}”?`),
-          el('p', { class: 'small muted' }, `You opened it ${ago(p.openedAt)}.`),
-          el('div', { class: 'acts' },
-            el('button', { class: 'btn sage', onclick: () => { setDone(it.key, true); closeSheet(true); } }, 'Yes, done'),
-            el('button', { class: 'btn', onclick: () => closeSheet(true) }, 'Not yet'),
-            later));
-      }
+      body.append(el('h3', { id: 'sheetH' }, `Finished “${it.title}”?`), el('p', { class: 'small muted' }, `You opened it ${ago(p.openedAt)}.`),
+        el('div', { class: 'row' }, el('button', { class: 'btn sage', onclick: () => { setDone(it.key); closeSheet(true); } }, 'Yes, done'), el('button', { class: 'btn', onclick: () => closeSheet(true) }, 'Not yet'), later));
     }
     document.getElementById('sheet').hidden = false;
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkPending(); else if (active) track(active.key, active.player); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkPending(); else if (media && media.kind === 'yt') trackVideo(media); });
   window.addEventListener('focus', checkPending);
   window.addEventListener('pageshow', checkPending);
 
-  // ---------------------------------------------------------------- backup code
-  const encode = s => 'PC2.' + btoa(unescape(encodeURIComponent(stable(s))));
-  const decode = c => JSON.parse(decodeURIComponent(escape(atob(c.trim().replace(/^PC2\./, '')))));
-  function fillBackup() { document.getElementById('backupOut').value = encode(S); }
-  document.getElementById('backupBox').addEventListener('toggle', e => { if (e.target.open) fillBackup(); });
-  document.getElementById('copyCode').onclick = () => {
-    const out = document.getElementById('backupOut'), msg = document.getElementById('copyMsg');
-    fillBackup();
-    const fallback = () => { out.focus(); out.select(); msg.textContent = 'Selected. Copy it with your keyboard or long-press.'; };
-    try { navigator.clipboard.writeText(out.value).then(() => { msg.textContent = 'Copied.'; }, fallback); } catch (e) { fallback(); }
-  };
-  document.getElementById('restoreCode').onclick = () => {
-    const msg = document.getElementById('restoreMsg'), inp = document.getElementById('backupIn');
-    try {
-      const st = decode(inp.value);
-      if (!st || st.v !== 2) throw new Error();
-      S = merge(S, st); commit({ render: false }); refresh(true);
-      inp.value = ''; msg.textContent = 'Progress added.';
-    } catch (e) { msg.textContent = "That code didn't work. Copy the whole code, starting with PC2."; }
-  };
-
-  // ---------------------------------------------------------------- reset
-  const rc = document.getElementById('resetConfirm');
-  document.getElementById('reset').onclick = () => { rc.hidden = false; };
-  document.getElementById('resetNo').onclick = () => { rc.hidden = true; };
-  document.getElementById('resetYes').onclick = () => { const r = now(); S = blank(); S.resetAt = r; S.pendingAt = r; rc.hidden = true; view = 0; commit({ render: false }); refresh(true); };
-
-  // ---------------------------------------------------------------- boot
+  // ================================================================ boot
   const local = loadLocal();
   if (local) S = merge(blank(), local);
   if (saveLocal()) mode = 'local';
-  view = activeWeek();
-  showSync();
-  refresh(true);
+  render();
   checkPending();
   initCloud();
 })();
 </script>
+</body>
+</html>
